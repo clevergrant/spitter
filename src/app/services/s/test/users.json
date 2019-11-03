@@ -1,0 +1,54 @@
+[
+	{
+		"id": "kDSgjw62q4eZ1G8VnTEczP",
+		"alias": "clevergrant",
+		"name": "Grant Perdue",
+		"photo": {
+			"src": "https://avatars0.githubusercontent.com/u/8261273?s=460&v=4",
+			"attachmentType": "PHOTO"
+		},
+		"following": [
+			"thehoff",
+			"bobbyb"
+		],
+		"followers": [
+			"thehoff",
+			"bobbyb"
+		],
+		"password": "pass"
+	},
+	{
+		"id": "cgRQjXoZRS4assM2oAWZp9",
+		"alias": "thehoff",
+		"name": "David Hasselhoff",
+		"photo": {
+			"src": "https://www.thesun.co.uk/wp-content/uploads/2017/08/nintchdbpict0001813738081.jpg",
+			"attachmentType": "PHOTO"
+		},
+		"following": [
+			"clevergrant",
+			"bobbyb"
+		],
+		"followers": [
+			"clevergrant"
+		],
+		"password": "thehoff"
+	},
+	{
+		"id": "cu89ae4jtWcaqkxMRtSPAM",
+		"alias": "bobbyb",
+		"name": "Robert Baratheon",
+		"photo": {
+			"src": "https://www.hbo.com/content/dam/hbodata/series/game-of-thrones/character/s5/robert-baratheon-1920.jpg/_jcr_content/renditions/cq5dam.web.1200.675.jpeg",
+			"attachmentType": "PHOTO"
+		},
+		"following": [
+			"clevergrant"
+		],
+		"followers": [
+			"clevergrant",
+			"thehoff"
+		],
+		"password": "bow"
+	}
+]

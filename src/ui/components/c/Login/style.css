@@ -1,0 +1,43 @@
+#login {
+	padding: 5rem;
+}
+
+#login>h1 {
+	text-align: center;
+}
+
+#login>form {
+	display: flex;
+	flex-direction: column;
+}
+
+#login>small {
+	padding-top: 2rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#login>p {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#login>form>label {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	padding: 1rem 0;
+}
+
+#login>form>button {
+	width: fit-content;
+	align-self: center;
+}
+
+.label-button {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}

@@ -1,0 +1,13 @@
+.user-pic {
+	height: 3rem;
+	width: 3rem;
+	border-radius: 50%;
+	overflow: hidden;
+}
+
+.user-pic img {
+	height: 3rem;
+	width: 3rem;
+	object-fit: cover;
+	object-position: center;
+}

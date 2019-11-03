@@ -1,0 +1,57 @@
+.profile {
+	display: flex;
+	border: 2px solid var(--color-border);
+	border-top: none;
+	padding: 1rem;
+}
+
+.profile .details {
+	padding-left: 2rem;
+}
+
+.profile .details h2 {
+	margin: 0;
+}
+
+.profile .details .follow a {
+	color: var(--text-faded);
+	margin-right: 1rem;
+}
+
+.profile .details .follow a span {
+	color: var(--text);
+	font-weight: bold;
+}
+
+.input-change-photo {
+	position: relative;
+}
+
+.image-circle-overlay {
+	top: 0;
+	left: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 7.5rem;
+	width: 7.5rem;
+	border-radius: 50%;
+	cursor: pointer;
+}
+
+.image-circle-overlay>span {
+	display: none;
+}
+
+.image-circle-overlay:hover {
+	background: rgba(0, 0, 0, 0.5);
+}
+
+.image-circle-overlay:hover>span {
+	display: initial;
+}
+
+.form-change-photo {
+	display: flex;
+	position: absolute;
+}

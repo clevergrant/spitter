@@ -1,0 +1,43 @@
+.status {
+	display: flex;
+	padding: 1rem;
+	background-color: var(--color-background);
+	border: 2px solid var(--color-border);
+	border-top: none;
+}
+
+.status .inner {
+	margin-left: 1rem;
+	color: var(--text);
+}
+
+.status .inner small {
+	color: var(--text-faded);
+	margin: 0 .5rem;
+}
+
+.status .inner .middot {
+	color: var(--text-faded);
+}
+
+.status .inner .p-link {
+	cursor: pointer;
+}
+
+.status-link {
+	color: var(--color-primary);
+	cursor: pointer;
+}
+
+.status-link:hover {
+	text-decoration: underline;
+}
+
+.status-alias {
+	text-decoration: none;
+}
+
+.status-alias>span {
+	color: var(--text-faded);
+	margin: 0 .5rem;
+}

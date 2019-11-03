@@ -1,0 +1,27 @@
+.attachment-view {
+	max-width: 30rem;
+	width: fit-content;
+	overflow: hidden;
+	margin: 1rem auto;
+	position: relative;
+	border-radius: .3rem;
+	box-shadow: 0 0 8px 0 var(--color-border);
+}
+
+.attachment-view>button {
+	position: absolute;
+	font-size: 3rem;
+	transform: rotate(45deg);
+	padding: 0;
+	top: 0;
+	right: 1rem;
+	color: var(--text);
+	text-shadow: 0 0 5px rgba(0, 0, 0, 1);
+}
+
+.attachment-view>img {
+	max-width: 30rem;
+	object-fit: contain;
+	object-position: center;
+	margin-bottom: -4px;
+}

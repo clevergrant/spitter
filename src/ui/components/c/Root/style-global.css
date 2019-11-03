@@ -1,0 +1,76 @@
+/* vars */
+
+:root {
+	--text: white;
+	--text-faded: rgba(255, 255, 255, 0.5);
+	--color-background: #15202b;
+	--color-border: #3d5466;
+	--color-primary: #00a1a1;
+}
+
+/* no scrollbar */
+
+::-webkit-scrollbar {
+	display: none;
+}
+
+html {
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+
+/* styles */
+
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans:400,700&display=swap');
+body {
+	font-family: 'Noto Sans', sans-serif;
+	background: var(--color-background);
+}
+
+button, .label-button, a {
+	text-decoration: none;
+	outline: none;
+	cursor: pointer;
+}
+
+button, .label-button {
+	background: transparent;
+	padding: 1rem;
+	color: var(--text-faded);
+	border: none;
+}
+
+button:hover, .label-button:hover {
+	color: var(--text);
+}
+
+button.active {
+	color: var(--text);
+}
+
+button.primary {
+	color: var(--text);
+	background-color: var(--color-primary);
+	border-radius: .2rem;
+}
+
+a {
+	color: var(--text);
+}
+
+input {
+	border: none;
+	border-bottom: solid 2px var(--color-border);
+	padding: .5rem;
+	padding-top: 0;
+	margin-left: 1rem;
+	line-height: 2px;
+	background: transparent;
+	outline: none;
+	width: 100%;
+	color: var(--text);
+}
+
+::placeholder {
+	color: var(--text-faded);
+}

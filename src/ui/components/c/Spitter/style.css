@@ -1,0 +1,33 @@
+.spit {
+	border: 2px solid var(--color-border);
+	border-top: none;
+}
+
+.spit .spit-text>input {
+	width: calc(35rem - 2px - 2rem);
+}
+
+.spit .spit-text>button {
+	width: calc(5rem - 2px);
+}
+
+.spit .spit-attachment {
+	display: flex;
+	padding: 0 1rem;
+}
+
+.label-attachment {
+	flex: 1;
+	margin: calc(2rem - 4px);
+	padding: 1rem;
+	border: 2px dashed var(--color-border);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: var(--text-faded);
+	cursor: pointer;
+}
+
+.label-attachment:hover {
+	color: var(--text);
+}

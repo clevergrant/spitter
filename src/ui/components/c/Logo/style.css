@@ -1,0 +1,10 @@
+
+.logo-wrapper {
+	display: flex;
+	align-items: center;
+}
+
+.logo-wrapper>img {
+	height: 2rem;
+	width: 2rem;
+}
