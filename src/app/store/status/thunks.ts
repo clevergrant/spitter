@@ -42,12 +42,12 @@ export const getStory = (alias: string): StatusResult<GetStoryDone> =>
 
 			return dispatch(actions.getStorySuccess(statuses))
 
-		} catch(error) {
+		} catch (error) {
 			return dispatch(actions.statusError(error))
 		}
 	}
 
-export const getFeed = (aliases: string[]): StatusResult<GetFeedDone> =>
+export const getFeed = (alias: string): StatusResult<GetFeedDone> =>
 	async (dispatch, getState, { statusService }) => {
 
 		const {
@@ -59,13 +59,13 @@ export const getFeed = (aliases: string[]): StatusResult<GetFeedDone> =>
 
 		try {
 
-			const statuses = await statusService.getFeed(aliases, lastId, numResults)
+			const statuses = await statusService.getFeed(alias, lastId, numResults)
 
 			if (!statuses.length) return dispatch(actions.statusAbort())
 
 			return dispatch(actions.getFeedSuccess(statuses))
 
-		} catch(error) {
+		} catch (error) {
 			return dispatch(actions.statusError(error))
 		}
 	}

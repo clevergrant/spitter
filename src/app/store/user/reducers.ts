@@ -56,11 +56,11 @@ const userReducer: Reducer<UserStore, UserActionType> = (
 			validationMessage: ``,
 		}
 
-	case UserTypes.GET_USERLIST_SUCCESS:
+	case UserTypes.GET_USER_LIST_SUCCESS:
 		return {
 			...store,
-			userList: [...(store.users ? store.users : []), ...action.payload.users],
-			lastId: action.payload.users[action.payload.users.length - 1].id,
+			userList: [...(store.userList ? store.userList : []), ...action.payload.users],
+			lastId: action.payload.users[action.payload.users.length - 1],
 			loading: false,
 			validationMessage: ``,
 		}

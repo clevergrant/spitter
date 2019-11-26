@@ -17,7 +17,7 @@ const authReducer: Reducer<AuthStore, AuthActionType> = (
 		}
 
 	case AuthTypes.AUTH_ERROR:
-		console.error(action.payload.error.message)
+		console.error(action.payload.error)
 		return {
 			...store,
 			user: undefined,
@@ -29,6 +29,13 @@ const authReducer: Reducer<AuthStore, AuthActionType> = (
 		return {
 			...store,
 			user: action.payload.user,
+			loading: false,
+			validationMessage: ``,
+		}
+
+	case AuthTypes.REGISTER_SUCCESS:
+		return {
+			...store,
 			loading: false,
 			validationMessage: ``,
 		}

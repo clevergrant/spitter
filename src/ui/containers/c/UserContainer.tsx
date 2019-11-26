@@ -5,14 +5,18 @@ import { connect } from 'react-redux'
 import { User } from 'app/models'
 
 import { actions, RootStore } from 'app/store'
-import { GetUserDone, UserCleanPayload, UserClean } from 'app/store/user/types'
+import {
+	// GetUserDone,
+	UserCleanPayload,
+	UserClean,
+} from 'app/store/user/types'
 
 import { UserView } from 'ui/components'
 
 interface Props {
 	user?: User
 	fetchedUser?: User
-	getUser: (alias: string) => Promise<GetUserDone>
+	// getUser: (alias: string) => Promise<GetUserDone>
 	cleanUserStore: (store: UserCleanPayload) => Promise<UserClean>
 }
 
@@ -25,7 +29,7 @@ const UserContainer: FC<Props> = props => {
 	const {
 		user,
 		fetchedUser,
-		getUser,
+		// getUser,
 		cleanUserStore,
 	} = props
 
@@ -42,10 +46,17 @@ const UserContainer: FC<Props> = props => {
 			else if (!alias) return
 			else if (!fetchedUser) {
 				setSelf(alias === user.alias)
-				getUser(alias)
+				console.log()
+				// getUser(alias)
 			}
 		},
-		[user, alias, fetchedUser, getUser, setSelf]
+		[
+			user,
+			alias,
+			fetchedUser,
+			// getUser,
+			setSelf,
+		]
 	)
 
 	useEffect(() => () => {
@@ -75,7 +86,7 @@ const mapStoreToProps = (store: RootStore) => ({
 })
 
 const mapDispatchToProps = {
-	getUser: actions.getUser,
+	// getUser: actions.getUser,
 	cleanUserStore: actions.cleanUserStore,
 }
 

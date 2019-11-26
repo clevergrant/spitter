@@ -66,9 +66,9 @@ export function getUsersSuccess(users: User[]): GetUsersSuccess {
 	}
 }
 
-export function getUserListSuccess(users: User[]): GetUserListSuccess {
+export function getUserListSuccess(users: string[]): GetUserListSuccess {
 	return {
-		type: UserTypes.GET_USERLIST_SUCCESS,
+		type: UserTypes.GET_USER_LIST_SUCCESS,
 		payload: {
 			users,
 		},

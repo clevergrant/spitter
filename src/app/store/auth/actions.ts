@@ -5,6 +5,7 @@ import {
 	AuthError,
 	LoginSuccess,
 	LogoutSuccess,
+	RegisterSuccess,
 } from './types'
 
 import { User } from 'app/models'
@@ -39,9 +40,14 @@ export function loginSuccess(user: User): LoginSuccess {
 	}
 }
 
+export function registerSuccess(): RegisterSuccess {
+	return {
+		type: AuthTypes.REGISTER_SUCCESS,
+	}
+}
+
 export function logoutSuccess(): LogoutSuccess {
 	return {
 		type: AuthTypes.LOGOUT_SUCCESS,
 	}
 }
-

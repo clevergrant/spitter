@@ -40,24 +40,8 @@ export class MockStatusService implements StatusService {
 		}, 100)
 	})
 
-	public getFeed = (aliases: string[], lastId: string, numResults: number) => new Promise<Status[]>((resolve, reject) => {
+	public getFeed = (alias: string, lastId: string, numResults: number) => new Promise<Status[]>((resolve, reject) => {
 		setTimeout(() => {
-			try {
-
-				const statuses = this.___statuses
-					.filter(status => aliases.find(alias => alias === status.alias))
-					.sort((a, b) => b.timestamp.getDate() - a.timestamp.getDate())
-
-				if (lastId === ``) resolve(statuses.slice(0, numResults))
-				else {
-					const lastIndex = statuses.findIndex(status => status.id === lastId) + 1
-					const nextStatuses = statuses.slice(lastIndex, lastIndex + numResults)
-					resolve(nextStatuses)
-				}
-
-			} catch (error) {
-				reject(error)
-			}
 		}, 100)
 	})
 
@@ -93,12 +77,12 @@ export class MockStatusService implements StatusService {
 		}
 	})
 
-	public addStatus = (status: Status) => new Promise<void>((resolve, reject) => {
+	public addStatus = (status: Status) => new Promise<string>((resolve, reject) => {
 		setTimeout(() => {
 			try {
 
 				this.___statuses.push(status)
-				resolve()
+				resolve(`Status has been added.`)
 
 			} catch (error) {
 				reject(error)

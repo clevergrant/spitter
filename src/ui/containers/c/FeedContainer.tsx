@@ -7,7 +7,11 @@ import { Status, User } from 'app/models'
 
 import { actions, RootStore } from 'app/store'
 import { GetFeedDone, StatusCleanPayload, StatusClean } from 'app/store/status/types'
-import { GetUsersDone, UserCleanPayload, UserClean } from 'app/store/user/types'
+import {
+	GetUsersDone,
+	UserCleanPayload,
+	UserClean,
+} from 'app/store/user/types'
 
 import { Feed } from 'ui/components'
 
@@ -16,7 +20,7 @@ interface Props {
 	users?: User[]
 	feed?: Status[]
 	loading: boolean
-	getFeed: (aliases: string[]) => Promise<GetFeedDone>
+	getFeed: (alias: string) => Promise<GetFeedDone>
 	getUsers: (aliases: string[]) => Promise<GetUsersDone>
 	cleanDataStore: (store: StatusCleanPayload) => Promise<StatusClean>
 	cleanUserStore: (store: UserCleanPayload) => Promise<UserClean>
@@ -39,13 +43,13 @@ const FeedContainer: FC<Props> = props => {
 
 	window.onscroll = throttle(() => {
 		if (user && endEl.current && elementTopInView(endEl.current) && !loading)
-			getFeed([user.alias, ...user.following])
-	}, 250, { leading: true, trailing: true })
+			getFeed(user.alias)
+	}, 1000, { leading: true })
 
 	useEffect(
 		() => {
 			if (!user) return
-			else if (!feed) getFeed([user.alias, ...user.following])
+			else if (!feed) getFeed(user.alias)
 			else {
 				const usersNeeded = feed.reduce((acc: string[], status: Status) => {
 					if (!acc.find(alias => alias === status.alias))
@@ -58,11 +62,17 @@ const FeedContainer: FC<Props> = props => {
 					const usersChanged = JSON.stringify(users.map(user => user.alias)) !== JSON.stringify(usersNeeded)
 					if (usersChanged) getUsers(usersNeeded)
 					else if (endEl.current && elementTopInView(endEl.current))
-						getFeed([user.alias, ...user.following])
+						getFeed(user.alias)
 				}
 			}
 		},
-		[user, feed, getFeed, users, getUsers],
+		[
+			user,
+			feed,
+			getFeed,
+			users,
+			getUsers,
+		],
 	)
 
 	useEffect(() => () => {

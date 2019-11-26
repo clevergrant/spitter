@@ -11,7 +11,7 @@ import { Root } from 'ui/components'
 interface Props {
 	user?: User
 	loading: boolean
-	login: (alias?: string | undefined, password?: string | undefined) => Promise<LoginDone>
+	check: () => Promise<LoginDone>
 	logout: () => Promise<LogoutDone>
 }
 
@@ -22,15 +22,15 @@ const RootContainer: FC<Props> = props => {
 	const {
 		user,
 		loading,
-		login,
+		check,
 		logout,
 	} = props
 
 	useEffect(
 		() => {
-			if (!user) login()
+			if (!user) check()
 		},
-		[user, login]
+		[user, check]
 	)
 
 	// Handlers
@@ -57,6 +57,7 @@ const mapStoreToProps = (store: RootStore) => ({
 })
 
 const mapDispatchToProps = {
+	check: actions.check,
 	login: actions.login,
 	logout: actions.logout,
 }

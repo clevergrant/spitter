@@ -8,6 +8,10 @@ import store from 'app/store'
 
 import { RootContainer } from 'ui/containers'
 
+import Amplify from 'aws-amplify'
+import awsConfig from './aws-exports'
+Amplify.configure(awsConfig)
+
 ReactDOM.render(
 	<Provider store={store}>
 		<RootContainer />

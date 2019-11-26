@@ -25,9 +25,11 @@ const LoginContainer: FC<Props> = props => {
 
 	const {
 		validationMessage,
+		login,
+		register,
 	} = props
 
-	const [isLogin, setislogin]: [boolean, Function] = useState(true)
+	const [isLogin, setIsLogin]: [boolean, Function] = useState(true)
 	const [name, setName]: [string, Function] = useState(``)
 	const [alias, setAlias]: [string, Function] = useState(``)
 	const [password, setPassword]: [string, Function] = useState(``)
@@ -66,7 +68,7 @@ const LoginContainer: FC<Props> = props => {
 
 		const file: File = list[0]
 
-		const getfile = new Promise<string>((resolve, reject) => {
+		const getFile = new Promise<string>((resolve, reject) => {
 			const reader = new FileReader()
 			reader.onerror = reject
 			reader.onload = () => {
@@ -79,8 +81,9 @@ const LoginContainer: FC<Props> = props => {
 		})
 
 		const photo: Attachment = {
-			src: await getfile as string,
+			src: await getFile as string,
 			attachmentType: AttachmentType.PHOTO,
+			file,
 		}
 
 		setPhoto(photo)
@@ -88,19 +91,21 @@ const LoginContainer: FC<Props> = props => {
 
 	const handleLogin = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
-		props.login(alias, password)
+		login(alias, password)
 		setMessage(``)
 	}
 
 	const handleRegister = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
-		props.register(name, alias, password, photo as Attachment)
+		if (photo)
+			register(name, alias, password, photo)
+		else setMessage(`Please select a photo.`)
 		setMessage(``)
 	}
 
 	const toggleIsLogin = (e: MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault()
-		setislogin(!isLogin)
+		setIsLogin(!isLogin)
 		setMessage(``)
 	}
 
@@ -124,7 +129,7 @@ const LoginContainer: FC<Props> = props => {
 		photo,
 	}
 
-	return <Login handlers={handlers} viewstate={viewstate} />
+	return <Login viewstate={viewstate} handlers={handlers} />
 
 }
 

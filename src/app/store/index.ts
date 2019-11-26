@@ -21,6 +21,7 @@ import {
 	login,
 	register,
 	logout,
+	check,
 } from './auth/thunks'
 
 import {
@@ -34,10 +35,9 @@ import {
 
 import {
 	cleanUserStore,
-	getUser,
-	getUsers,
 	getFollowers,
 	getFollowing,
+	getUsers,
 } from './user/thunks'
 
 export interface RootStore {
@@ -60,6 +60,7 @@ export const actions = {
 	login,
 	register,
 	logout,
+	check,
 	cleanStatusStore,
 	getStory,
 	getFeed,
@@ -67,10 +68,9 @@ export const actions = {
 	getStatus,
 	addStatus,
 	cleanUserStore,
-	getUser,
-	getUsers,
 	getFollowers,
 	getFollowing,
+	getUsers,
 }
 
 const makeStore = (services: Services) => createStore(

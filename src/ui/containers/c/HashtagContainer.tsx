@@ -6,14 +6,18 @@ import { Status, User } from 'app/models'
 
 import { actions, RootStore } from 'app/store'
 import { GetHashtagDone, StatusCleanPayload, StatusClean } from 'app/store/status/types'
-import { GetUsersDone, UserCleanPayload, UserClean } from 'app/store/user/types'
+import {
+	// GetUsersDone,
+	UserCleanPayload,
+	UserClean,
+} from 'app/store/user/types'
 
 import { Hashtag } from 'ui/components'
 
 interface Props {
 	users?: User[]
 	hashtags?: Status[]
-	getUsers: (aliases: string[]) => Promise<GetUsersDone>
+	// getUsers: (aliases: string[]) => Promise<GetUsersDone>
 	getHashtag: (hashtag: string) => Promise<GetHashtagDone>
 	cleanDataStore: (store: StatusCleanPayload) => Promise<StatusClean>
 	cleanUserStore: (store: UserCleanPayload) => Promise<UserClean>
@@ -28,7 +32,7 @@ const HashtagViewContainer: FC<Props> = props => {
 	const {
 		users,
 		hashtags,
-		getUsers,
+		// getUsers,
 		getHashtag,
 		cleanDataStore,
 		cleanUserStore,
@@ -38,18 +42,24 @@ const HashtagViewContainer: FC<Props> = props => {
 		() => {
 			if (!hashtag) return
 			else if (!hashtags) getHashtag(hashtag)
-			else if (!users) {
+			// else if (!users) {
 
-				const usersneeded = hashtags.reduce((acc: string[], status: Status) => {
-					if (!acc.find(alias => alias === status.alias))
-						acc.push(status.alias)
-					return acc
-				}, [])
+			// 	const usersneeded = hashtags.reduce((acc: string[], status: Status) => {
+			// 		if (!acc.find(alias => alias === status.alias))
+			// 			acc.push(status.alias)
+			// 		return acc
+			// 	}, [])
 
-				getUsers(usersneeded)
-			}
+			// 	getUsers(usersneeded)
+			// }
 		},
-		[hashtag, users, hashtags, getUsers, getHashtag]
+		[
+			hashtag,
+			users,
+			hashtags,
+			// getUsers,
+			getHashtag,
+		]
 	)
 
 	useEffect(() => () => {
@@ -79,7 +89,7 @@ const mapStoreToProps = (store: RootStore) => ({
 
 const mapDispatchToProps = {
 	getHashtag: actions.getHashtag,
-	getUsers: actions.getUsers,
+	// getUsers: actions.getUsers,
 	cleanUserStore: actions.cleanUserStore,
 	cleanDataStore: actions.cleanStatusStore,
 }

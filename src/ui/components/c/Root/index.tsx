@@ -20,6 +20,8 @@ import './style-global.css'
 import './style.css'
 
 interface Props {
+	authState?: string
+	authData?: any
 	viewstate: {
 		user?: User
 		loading: boolean

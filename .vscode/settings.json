@@ -1,7 +1,8 @@
 {
 	"eslint.alwaysShowStatus": true,
-	"eslint.autoFixOnSave": true,
 	"eslint.packageManager": "yarn",
+	"eslint.autoFixOnSave": true,
+	"eslint.lintTask.enable": true,
 	"eslint.validate": [
 		{
 			"language": "javascript",
@@ -20,7 +21,9 @@
 			"autoFix": true
 		}
 	],
-	"eslint.lintTask.enable": true,
+	"[typescriptreact]": {
+		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
+	},
 	"editor.renderWhitespace": "all",
 	"files.trimTrailingWhitespace": true,
 	"emmet.showSuggestionsAsSnippets": true,
@@ -28,7 +31,4 @@
 	"editor.detectIndentation": false,
 	"editor.insertSpaces": false,
 	"npm.enableScriptExplorer": true,
-	"[typescriptreact]": {
-		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
-	},
 }

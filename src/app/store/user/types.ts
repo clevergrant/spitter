@@ -12,7 +12,7 @@ export enum UserTypes {
 
 	GET_USER_SUCCESS = 'GET_USER_SUCCESS',
 	GET_USERS_SUCCESS = 'GET_USERS_SUCCESS',
-	GET_USERLIST_SUCCESS = 'GET_USERLIST_SUCCESS'
+	GET_USER_LIST_SUCCESS = 'GET_USER_LIST_SUCCESS'
 
 }
 
@@ -36,8 +36,8 @@ export interface GetUserSuccess extends Action<UserTypes.GET_USER_SUCCESS> {
 export interface GetUsersSuccess extends Action<UserTypes.GET_USERS_SUCCESS> {
 	payload: { users: User[] }
 }
-export interface GetUserListSuccess extends Action<UserTypes.GET_USERLIST_SUCCESS> {
-	payload: { users: User[] }
+export interface GetUserListSuccess extends Action<UserTypes.GET_USER_LIST_SUCCESS> {
+	payload: { users: string[] }
 }
 
 type UserStop =

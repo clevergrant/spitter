@@ -10,6 +10,7 @@ export enum AuthTypes {
 	AUTH_ERROR = 'AUTH_ERROR',
 
 	LOGIN_SUCCESS = 'LOGIN_SUCCESS',
+	REGISTER_SUCCESS = 'REGISTER_SUCCESS',
 	LOGOUT_SUCCESS = 'LOGOUT_SUCCESS',
 
 }
@@ -23,6 +24,7 @@ export interface AuthError extends Action<AuthTypes.AUTH_ERROR> {
 export interface LoginSuccess extends Action<AuthTypes.LOGIN_SUCCESS> {
 	payload: { user: User }
 }
+export interface RegisterSuccess extends Action<AuthTypes.REGISTER_SUCCESS> { }
 export interface LogoutSuccess extends Action<AuthTypes.LOGOUT_SUCCESS> { }
 
 export type LoginDone =
@@ -33,11 +35,17 @@ export type LogoutDone =
 	| LogoutSuccess
 	| AuthError
 
+export type RegisterDone =
+	| RegisterSuccess
+	| AuthError
+
 export type AuthActionType =
 	| AuthStart
 	| AuthAbort
 	| AuthError
 	| LoginSuccess
+	| RegisterSuccess
 	| LogoutSuccess
 	| LoginDone
+	| RegisterDone
 	| LogoutDone

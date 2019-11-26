@@ -3,7 +3,7 @@ import { User } from 'app/models'
 export default interface UserStore {
 	readonly user?: User
 	readonly users?: User[]
-	readonly userList?: User[]
+	readonly userList?: string[]
 	readonly lastId: string
 	readonly numResults: number
 	readonly loading: boolean

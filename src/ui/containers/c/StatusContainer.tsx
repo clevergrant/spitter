@@ -5,7 +5,11 @@ import { connect } from 'react-redux'
 import { User, Status } from 'app/models'
 
 import { actions, RootStore } from 'app/store'
-import { GetUserDone, UserCleanPayload, UserClean } from 'app/store/user/types'
+import {
+	// GetUserDone,
+	UserCleanPayload,
+	UserClean,
+} from 'app/store/user/types'
 import { GetStatusDone, StatusCleanPayload, StatusClean } from 'app/store/status/types'
 
 import { StatusViewContainer } from 'ui/containers'
@@ -13,7 +17,7 @@ import { StatusViewContainer } from 'ui/containers'
 interface Props {
 	user?: User
 	status?: Status
-	getUser: (alias: string) => Promise<GetUserDone>
+	// getUser: (alias: string) => Promise<GetUserDone>
 	getStatus: (id: string) => Promise<GetStatusDone>
 	cleanDataStore: (store: StatusCleanPayload) => Promise<StatusClean>
 	cleanUserStore: (store: UserCleanPayload) => Promise<UserClean>
@@ -28,7 +32,7 @@ const StatusContainer: FC<Props> = props => {
 	const {
 		user,
 		status,
-		getUser,
+		// getUser,
 		getStatus,
 		cleanDataStore,
 		cleanUserStore,
@@ -38,9 +42,15 @@ const StatusContainer: FC<Props> = props => {
 
 		if (!id) return
 		else if (!status) getStatus(id)
-		else if (!user) getUser(status.alias)
+		// else if (!user) getUser(status.alias)
 
-	}, [id, status, getStatus, user, getUser])
+	}, [
+		id,
+		status,
+		getStatus,
+		user,
+		// getUser,
+	])
 
 	useEffect(() => () => {
 		cleanDataStore({
@@ -62,7 +72,7 @@ const mapStoreToProps = (store: RootStore) => ({
 })
 
 const mapDispatchToProps = {
-	getUser: actions.getUser,
+	// getUser: actions.getUser,
 	getStatus: actions.getStatus,
 	cleanUserStore: actions.cleanUserStore,
 	cleanDataStore: actions.cleanStatusStore,

@@ -1,0 +1,19 @@
+{
+	"react": {
+		"awscloudformation": {
+			"AuthRoleName": "amplify-spitter-react-134232-authRole",
+			"UnauthRoleArn": "arn:aws:iam::078568561304:role/amplify-spitter-react-134232-unauthRole",
+			"AuthRoleArn": "arn:aws:iam::078568561304:role/amplify-spitter-react-134232-authRole",
+			"Region": "us-west-2",
+			"DeploymentBucketName": "amplify-spitter-react-134232-deployment",
+			"UnauthRoleName": "amplify-spitter-react-134232-unauthRole",
+			"StackName": "amplify-spitter-react-134232",
+			"StackId": "arn:aws:cloudformation:us-west-2:078568561304:stack/amplify-spitter-react-134232/71621c50-0c9f-11ea-9a19-029d56ff9702"
+		},
+		"categories": {
+			"auth": {
+				"spitter": {}
+			}
+		}
+	}
+}

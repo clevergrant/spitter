@@ -6,7 +6,7 @@ import { RootStore } from 'app/store'
 
 import {
 	UserActionType,
-	GetUserDone,
+	// GetUserDone,
 	GetUsersDone,
 	UserCleanPayload,
 	UserClean,
@@ -21,34 +21,29 @@ export type UserResult<R> = ThunkAction<Promise<R>, RootStore, Services, UserAct
 
 export const cleanUserStore = (store: UserCleanPayload): UserResult<UserClean> => async dispatch => dispatch(actions.userClean(store))
 
-export const getUser = (alias: string): UserResult<GetUserDone> =>
+// export const getUser = (alias: string): UserResult<GetUserDone> =>
+// 	async (dispatch, _getState, { authService }) => {
+
+// 		dispatch(actions.userStart())
+
+// 		try {
+
+// 			const user = await authService.getUser(alias)
+// 			return dispatch(actions.getUserSuccess(user))
+
+// 		} catch (error) {
+// 			return dispatch(actions.userError(error))
+// 		}
+// 	}
+
+export const getUsers = (aliases: string[]): UserResult<GetUsersDone> =>
 	async (dispatch, _getState, { userService }) => {
 
 		dispatch(actions.userStart())
 
 		try {
 
-			const user = await userService.getUser(alias)
-			return dispatch(actions.getUserSuccess(user))
-
-		} catch (error) {
-			return dispatch(actions.userError(error))
-		}
-	}
-
-export const getUsers = (aliases: string[]): UserResult<GetUsersDone> =>
-	async (dispatch, getState, { userService }) => {
-
-		const {
-			lastId,
-			numResults,
-		} = getState().statusStore
-
-		dispatch(actions.userStart())
-
-		try {
-
-			const users = await userService.getUsers(aliases, lastId, numResults)
+			const users = await userService.getAllUsers().then(users => users.filter(u => aliases.includes(u.alias)))
 
 			if (!users.length) return dispatch(actions.userAbort())
 

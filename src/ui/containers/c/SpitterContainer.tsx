@@ -40,11 +40,12 @@ const SpitterContainer: FC<Props> = ({
 			const attachment: Attachment = {
 				src: ``,
 				attachmentType: AttachmentType.PHOTO,
+				file,
 			}
 
 			if (file.type.startsWith(`video/`)) attachment.attachmentType = AttachmentType.VIDEO
 
-			const getfile = new Promise<string>((resolve, reject) => {
+			const getFile = new Promise<string>((resolve, reject) => {
 				const reader = new FileReader()
 				reader.onerror = reject
 				reader.onload = () => {
@@ -56,7 +57,7 @@ const SpitterContainer: FC<Props> = ({
 				el.value = ``
 			})
 
-			attachment.src = await getfile as string
+			attachment.src = await getFile as string
 
 			setAttachment(attachment)
 		}
@@ -65,9 +66,8 @@ const SpitterContainer: FC<Props> = ({
 	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 
-		if (user) {
+		if (user && attachment) {
 			const newStatus: Status = new Status(user.alias, spit, attachment)
-
 			addStatus(newStatus)
 		}
 		console.log(e.target)

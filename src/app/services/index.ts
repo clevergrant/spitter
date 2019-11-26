@@ -1,12 +1,16 @@
-import { MockAuthService } from './s/test/MockAuthService'
-import { MockStatusService } from './s/test/MockStatusService'
-import { MockUserService } from './s/test/MockUserService'
+import AwsAuthService from './s/AwsAuthService'
+import AwsStatusService from './s/AwsStatusService'
+import AwsUserService from './s/AwsUserService'
 
 import {
 	AuthService,
 	StatusService,
 	UserService,
 } from 'app/interfaces'
+
+const authService = new AwsAuthService()
+const awsStatusService = new AwsStatusService()
+const awsUserService = new AwsUserService()
 
 export class Services {
 	public authService: AuthService
@@ -25,9 +29,9 @@ export class Services {
 }
 
 const services = new Services(
-	MockAuthService.getInstance(),
-	MockStatusService.getInstance(),
-	MockUserService.getInstance(),
+	authService,
+	awsStatusService,
+	awsUserService,
 )
 
 export default services

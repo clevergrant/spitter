@@ -1,34 +1,37 @@
 import { StatusService } from 'app/interfaces'
+import { Status } from 'app/models'
+import { awsProxy } from 'app/proxy'
 
-import { Status, Attachment } from 'app/models'
-
-import { apiGatewayProxy } from 'app/proxy'
-
-export class AwsStatusService implements StatusService {
+export default class AwsStatusService implements StatusService {
 
 	getStory = (alias: string, lastId: string, numResults: number) => new Promise<Status[]>((resolve, reject) => {
-		apiGatewayProxy.getStory(alias, lastId, numResults)
-			.then(r => {
-				console.log(r)
-				resolve(r)
-			})
+		awsProxy.getStory(alias, lastId, numResults)
+			.then(resolve)
 			.catch(reject)
 	})
 
-	getFeed = (aliases: string[]) => new Promise<Status[]>((resolve, reject) => {
-
+	getFeed = (alias: string, lastId: string, numResults: number) => new Promise<Status[]>((resolve, reject) => {
+		awsProxy.getFeed(alias, lastId, numResults)
+			.then(resolve)
+			.catch(reject)
 	})
 
-	getHashtags = (hashtag: string) => new Promise<Status[]>((resolve, reject) => {
-
+	getHashtags = (hashtag: string, lastId: string, numResults: number) => new Promise<Status[]>((resolve, reject) => {
+		awsProxy.getHashtags(hashtag, lastId, numResults)
+			.then(resolve)
+			.catch(reject)
 	})
 
 	getStatus = (id: string) => new Promise<Status>((resolve, reject) => {
-
+		awsProxy.getStatus(id)
+			.then(resolve)
+			.catch(reject)
 	})
 
-	addStatus = (status: Status) => new Promise<void>((resolve, reject) => {
-
+	addStatus = (status: Status) => new Promise<string>((resolve, reject) => {
+		awsProxy.addStatus(status)
+			.then(resolve)
+			.catch(reject)
 	})
 
 }

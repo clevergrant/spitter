@@ -5,9 +5,8 @@ import {
 import {
 	PUser,
 	User,
+	Attachment,
 } from 'app/models'
-
-import { MockUserService } from './MockUserService'
 
 export class MockAuthService implements AuthService {
 
@@ -29,20 +28,13 @@ export class MockAuthService implements AuthService {
 
 	private ___currentUser?: PUser
 
+	public register = (name: string, alias: string, password: string, photo: Attachment) => new Promise<User>((resolve, reject) => {
+
+	})
+
 	public login = (alias?: string, password?: string) => new Promise<User>((resolve, reject) => {
 		setTimeout(async () => {
 			if (this.___currentUser) resolve(this.___currentUser as User)
-			else if(alias && password) {
-				MockUserService.getInstance().getUser(alias)
-					.then(user => {
-						const puser = user as PUser
-						if (puser.password === password) {
-							this.___setCurrentUser(puser)
-							resolve(user)
-						} else reject(new Error(`Password incorrect.`))
-					})
-					.catch(reject)
-			} else reject(new Error(`Nobody is logged in.`))
 		}, 100)
 	})
 
@@ -58,18 +50,23 @@ export class MockAuthService implements AuthService {
 		}, 100)
 	})
 
+	public check = () => new Promise<User>((resolve, reject) => {
+		try {
+			resolve(this.___currentUser)
+		} catch (error) {
+			reject(error)
+		}
+	})
+
+	public getUser = () => new Promise<User>((res, rej) => {
+		res()
+	})
+	public getUsers = () => new Promise<User[]>((res, rej) => {
+		res()
+	})
+
 	private ___importCurrentUser = () => {
 		const alias = sessionStorage.getItem(`user`)
-		if (alias) {
-			MockUserService.getInstance().getUser(alias)
-				.then(u => {
-					const puser = u as PUser
-					this.___currentUser = puser
-				})
-				.catch((error: Error) => {
-					throw error
-				})
-		}
 	}
 
 	private ___setCurrentUser = (user?: PUser): void => {
