@@ -2,15 +2,13 @@ import AwsProxy from './p/AwsProxy'
 
 const awsProxy = new AwsProxy()
 
+export class Proxies {
+	awsProxy: AwsProxy = awsProxy
+}
+
 export {
 	AwsProxy,
 	awsProxy,
 }
 
-export class Proxies {
-	awsProxy: AwsProxy = awsProxy
-}
-
-const proxies = new Proxies()
-
-export default proxies
+export default new Proxies()

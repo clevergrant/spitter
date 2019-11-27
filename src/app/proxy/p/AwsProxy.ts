@@ -1,7 +1,9 @@
 import { Auth, Storage } from 'aws-amplify'
 import { User, Attachment, AttachmentType, Status } from 'app/models'
 
-export default class AmplifyProxy {
+export default class AwsProxy {
+
+	private ___baseUrl = `https://42l3t7qs2l.execute-api.us-west-2.amazonaws.com/v1`
 
 	login = async (alias: string, password: string) => {
 		const { username, attributes } = await Auth.signIn(alias, password)
@@ -41,8 +43,6 @@ export default class AmplifyProxy {
 
 		return [] as User[]
 	}
-
-	private ___baseUrl = `https://42l3t7qs2l.execute-api.us-west-2.amazonaws.com/v1`
 
 	public getStory = (alias: string, lastId: string, numResults: number) => new Promise<Status[]>((resolve, reject) => {
 		fetch(`${this.___baseUrl}/${alias}/story/${lastId === `` ? -1 : lastId}/${numResults}`).then(r => r.json())
@@ -160,4 +160,7 @@ export default class AmplifyProxy {
 			.catch(reject)
 	})
 
+	public getUser = async (alias: string) => {
+		return new User(``, alias, new Attachment(``, AttachmentType.PHOTO))
+	}
 }
