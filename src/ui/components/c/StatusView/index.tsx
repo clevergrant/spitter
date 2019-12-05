@@ -1,7 +1,7 @@
 import React, { FC, MouseEvent } from 'react'
 import { Link } from 'react-router-dom'
 
-import { User, Attachment } from 'app/models'
+import { User, Status } from 'app/models'
 
 import { ImageCircle, AttachmentView } from 'ui/components'
 
@@ -9,25 +9,23 @@ import './style.css'
 
 interface Props {
 	viewstate: {
-		id: string
+		status: Status
 		user: User
 		date: string
-		linkedStatus: any[]
-		attachment?: Attachment
+		linkedStatusText: any[]
 	}
 	handlers: {
-		handleStatusClick: (to: string) => (e: MouseEvent) => void
+		handleStatusClick: (alias: string, timestamp: number) => (e: MouseEvent) => void
 	}
 }
 
 const StatusView: FC<Props> = props => {
 
 	const {
-		id,
+		status,
 		user,
 		date,
-		linkedStatus,
-		attachment,
+		linkedStatusText: linkedStatus,
 	} = props.viewstate
 
 	const {
@@ -49,9 +47,9 @@ const StatusView: FC<Props> = props => {
 
 				<small>{date}</small>
 
-				<p className='p-link' onClick={handleStatusClick(id)}>{linkedStatus}</p>
+				<p className='p-link' onClick={handleStatusClick(status.alias, status.timestamp)}>{linkedStatus}</p>
 
-				{attachment && <AttachmentView attachment={attachment} />}
+				{status.attachment && <AttachmentView attachment={status.attachment} />}
 			</div>
 		</div>
 	)

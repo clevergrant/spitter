@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/quotes */
 import { Status } from 'app/models'
 import { Proxies } from 'app/proxy'
 import { Action, Reducer } from 'redux'
@@ -7,16 +8,16 @@ import { ThunkAction } from 'redux-thunk'
 
 export enum StatusTypes {
 
-	STATUS_START = `STATUS_START`,
-	STATUS_ABORT = `STATUS_ABORT`,
-	STATUS_ERROR = `STATUS_ERROR`,
-	STATUS_CLEAN = `STATUS_CLEAN`,
+	STATUS_START = 'STATUS_START',
+	STATUS_ABORT = 'STATUS_ABORT',
+	STATUS_ERROR = 'STATUS_ERROR',
+	STATUS_CLEAN = 'STATUS_CLEAN',
 
-	GET_STORY_SUCCESS = `GET_STORY_SUCCESS`,
-	GET_FEED_SUCCESS = `GET_FEED_SUCCESS`,
-	GET_HASHTAG_SUCCESS = `GET_HASHTAG_SUCCESS`,
-	GET_STATUS_SUCCESS = `GET_STATUS_SUCCESS`,
-	ADD_STATUS_SUCCESS = `ADD_STATUS_SUCCESS`,
+	GET_STORY_SUCCESS = 'GET_STORY_SUCCESS',
+	GET_FEED_SUCCESS = 'GET_FEED_SUCCESS',
+	GET_HASHTAG_SUCCESS = 'GET_HASHTAG_SUCCESS',
+	GET_STATUS_SUCCESS = 'GET_STATUS_SUCCESS',
+	ADD_STATUS_SUCCESS = 'ADD_STATUS_SUCCESS',
 
 }
 
@@ -114,7 +115,7 @@ export interface StatusStore {
 	readonly feed?: Status[]
 	readonly hashtags?: Status[]
 	readonly status?: Status
-	readonly lastId: string
+	readonly lastKey: string
 	readonly numResults: number
 	readonly loading: boolean
 	readonly validationMessage: string
@@ -133,10 +134,11 @@ export interface IStatusService {
 	readonly store: StatusStore
 	readonly reducer: Reducer<StatusStore, StatusActionType>
 
-	readonly getStory: (alias: string, lastId: string, numResults: number) => StatusResult<GetStoryDone>
-	readonly getFeed: (alias: string, lastId: string, numResults: number) => StatusResult<GetFeedDone>
-	readonly getHashtags: (hashtag: string, lastId: string, numResults: number) => StatusResult<GetHashtagDone>
-	readonly getStatus: (id: string) => StatusResult<GetStatusDone>
+	readonly getStory: (alias: string) => StatusResult<GetStoryDone>
+	readonly getFeed: (alias: string) => StatusResult<GetFeedDone>
+	readonly getHashtags: (hashtag: string) => StatusResult<GetHashtagDone>
+	readonly getStatus: (alias: string, timestamp: number) => StatusResult<GetStatusDone>
 	readonly addStatus: (status: Status) => StatusResult<AddStatusDone>
+	readonly cleanStatusStore: (store: StatusCleanPayload) => StatusResult<StatusClean>
 
 }

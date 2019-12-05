@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/quotes */
+
 import { User, Attachment } from 'app/models'
 import { ThunkAction } from 'redux-thunk'
 import { Proxies } from 'app/proxy'
@@ -7,12 +9,12 @@ import { Action, Reducer } from 'redux'
 
 export enum AuthTypes {
 
-	AUTH_START = `AUTH_START`,
-	AUTH_ABORT = `AUTH_ABORT`,
-	AUTH_ERROR = `AUTH_ERROR`,
+	AUTH_START = 'AUTH_START',
+	AUTH_ABORT = 'AUTH_ABORT',
+	AUTH_ERROR = 'AUTH_ERROR',
 
-	LOGIN_SUCCESS = `LOGIN_SUCCESS`,
-	LOGOUT_SUCCESS = `LOGOUT_SUCCESS`,
+	LOGIN_SUCCESS = 'LOGIN_SUCCESS',
+	LOGOUT_SUCCESS = 'LOGOUT_SUCCESS',
 
 }
 

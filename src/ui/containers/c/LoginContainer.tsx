@@ -10,8 +10,10 @@ import { connect } from 'react-redux'
 
 import { Attachment, AttachmentType } from 'app/models'
 
-import { actions, RootStore } from 'app/store'
-import { LoginDone } from 'app/store/auth/types'
+import services from 'app/services'
+import { RootStore } from 'app/services/store'
+
+import { LoginDone } from 'app/interfaces/auth'
 
 import { Login } from 'ui/components'
 
@@ -62,9 +64,9 @@ const LoginContainer: FC<Props> = props => {
 
 		setFile(e.target.value)
 
-		const list: FileList = e.target.files as FileList
+		const list = e.target.files as FileList
 
-		if (list.length <= 0) return
+		if (list.length) return
 
 		const file: File = list[0]
 
@@ -80,11 +82,7 @@ const LoginContainer: FC<Props> = props => {
 			e.target.value = ``
 		})
 
-		const photo: Attachment = {
-			src: await getFile as string,
-			attachmentType: AttachmentType.PHOTO,
-			file,
-		}
+		const photo = new Attachment(await getFile as string, AttachmentType.PHOTO, file)
 
 		setPhoto(photo)
 	}
@@ -138,8 +136,8 @@ const mapStoreToProps = (store: RootStore) => ({
 })
 
 const mapDispatchToProps = {
-	login: actions.login,
-	register: actions.register,
+	login: services.authService.login,
+	register: services.authService.register,
 }
 
 export default connect(mapStoreToProps, mapDispatchToProps)(LoginContainer)

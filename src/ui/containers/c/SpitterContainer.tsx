@@ -3,8 +3,10 @@ import { connect } from 'react-redux'
 
 import { Status, Attachment, AttachmentType, User } from 'app/models'
 
-import { actions, RootStore } from 'app/store'
-import { AddStatusDone } from 'app/store/status/types'
+import services from 'app/services'
+import { RootStore } from 'app/services/store'
+
+import { AddStatusDone } from 'app/interfaces/status'
 
 import { Spitter } from 'ui/components'
 
@@ -93,7 +95,7 @@ const mapStoreToProps = (store: RootStore) => ({
 })
 
 const mapDispatchToProps = {
-	addStatus: actions.addStatus,
+	addStatus: services.statusService.addStatus,
 }
 
 export default connect(mapStoreToProps, mapDispatchToProps)(SpitterContainer)

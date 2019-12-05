@@ -25,7 +25,7 @@ class AuthService implements IAuthService {
 		authStart: () => ({ type: this.types.AUTH_START }),
 		authAbort: () => ({ type: this.types.AUTH_ABORT }),
 		authError: (error: Error) => ({ type: this.types.AUTH_ERROR, payload: { error } }),
-		loginSuccess: (user: User) => ({ type: this.types.LOGIN_SUCCESS, payload: { user }}),
+		loginSuccess: (user: User) => ({ type: this.types.LOGIN_SUCCESS, payload: { user } }),
 		logoutSuccess: () => ({ type: this.types.LOGOUT_SUCCESS }),
 	}
 
@@ -93,7 +93,7 @@ class AuthService implements IAuthService {
 	readonly register = (name: string, alias: string, password: string, photo: Attachment): AuthResult<LoginDone> => async (dispatch, _getState, { awsProxy }) => {
 		dispatch(this.actions.authStart())
 		try {
-			const currentUser = await awsProxy.register(name, alias, password, photo).then(() => awsProxy.login(alias, password))
+			const currentUser = await awsProxy.register(name, alias, password, photo)
 			return dispatch(this.actions.loginSuccess(currentUser))
 		} catch (error) {
 			return dispatch(this.actions.authError(error))

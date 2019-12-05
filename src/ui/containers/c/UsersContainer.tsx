@@ -1,25 +1,23 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { connect } from 'react-redux'
 
 import { User } from 'app/models'
 
-import { actions, RootStore } from 'app/store'
-import {
-	// GetUserDone,
-	UserCleanPayload,
-	UserClean,
-	GetUserListDone,
-} from 'app/store/user/types'
+import services from 'app/services'
+import { RootStore } from 'app/services/store'
+
+import { GetUserDone, GetFollowersDone, UserCleanPayload, UserClean, GetFollowingDone } from 'app/interfaces/user'
 
 import { UsersView } from 'ui/components'
 
 interface Props {
 	user?: User
-	userList?: string[]
-	// getUser: (alias: string) => Promise<GetUserDone>
-	getFollowers: (alias: string) => Promise<GetUserListDone>
-	getFollowing: (alias: string) => Promise<GetUserListDone>
+	followers?: string[]
+	following?: string[]
+	getUser: (alias: string) => Promise<GetUserDone>
+	getFollowers: (alias: string) => Promise<GetFollowersDone>
+	getFollowing: (alias: string) => Promise<GetFollowingDone>
 	cleanUserStore: (store: UserCleanPayload) => Promise<UserClean>
 }
 
@@ -32,42 +30,35 @@ const UsersContainer: FC<Props> = props => {
 
 	const {
 		user,
-		userList,
-		// getUser,
+		followers,
+		following,
+		getUser,
 		getFollowers,
 		getFollowing,
 		cleanUserStore,
 	} = props
 
+	const [users, setUsers] = useState()
+
 	useEffect(
 		() => {
-
 			if (!alias || !list) return
-			// else if (!user) getUser(alias)
-			else if (!user) return
-			else if (!userList) {
-
-				switch (list) {
-				case `following`:
-					getFollowing(user.alias)
-					break
-
-				case `followers`:
-					getFollowers(user.alias)
-					break
-
-				default:
-					break
-				}
-
+			else if (!user) getUser(alias)
+			else if (list === `followers`) {
+				if (!followers) getFollowers(user.alias)
+				else setUsers(followers)
+			} else if (list === `following`) {
+				if (!following) getFollowing(user.alias)
+				else setUsers(following)
 			}
 		},
 		[
 			alias,
 			list,
 			user,
-			// getUser,
-			userList,
+			getUser,
+			followers,
+			following,
 			getFollowing,
 			getFollowers,
 		]
@@ -76,16 +67,17 @@ const UsersContainer: FC<Props> = props => {
 	useEffect(() => () => {
 		cleanUserStore({
 			user: true,
-			userList: true,
+			followers: true,
+			following: true,
 		})
 	}, [cleanUserStore, alias, list])
 
-	if (!alias || !list || !user || !userList) return null
+	if (!alias || !list || !user || !users) return null
 
 	const viewstate = {
 		alias,
 		list,
-		users: userList,
+		users,
 	}
 
 	return <UsersView viewstate={viewstate} />
@@ -93,14 +85,15 @@ const UsersContainer: FC<Props> = props => {
 
 const mapStoreToProps = (store: RootStore) => ({
 	user: store.userStore.user,
-	userList: store.userStore.userList,
+	followers: store.userStore.followers,
+	following: store.userStore.following,
 })
 
 const mapDispatchToProps = {
-	// getUser: actions.getUser,
-	getFollowers: actions.getFollowers,
-	getFollowing: actions.getFollowing,
-	cleanUserStore: actions.cleanUserStore,
+	getUser: services.userService.getUser,
+	getFollowers: services.userService.getFollowers,
+	getFollowing: services.userService.getFollowing,
+	cleanUserStore: services.userService.cleanUserStore,
 }
 
 export default connect(mapStoreToProps, mapDispatchToProps)(UsersContainer)

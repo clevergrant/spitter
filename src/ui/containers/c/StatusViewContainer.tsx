@@ -24,21 +24,21 @@ const StatusViewContainer: FC<Props> = props => {
 
 	const history = useHistory()
 
-	const handleStatusClick = (to: string) => (e: MouseEvent) => {
-		if ((e.target as HTMLElement).tagName !== `A`) history.push(`/status/${to}`)
+	const handleStatusClick = (alias: string, timestamp: number) => (e: MouseEvent) => {
+		if ((e.target as HTMLElement).tagName !== `A`) history.push(`/status/${alias}/${timestamp}`)
 	}
 
 	const hashtags = status.getHashtags()
 	const mentions = status.getMentions()
 	const urls = status.getUrls()
 
-	const linkedStatus: any[] = [status.text]
+	const linkedStatusText: any[] = [status.text]
 
 	let index = 0
 
 	hashtags.forEach(hashtag => {
-		linkedStatus.forEach((part, i) => {
-			linkedStatus.splice(i, 1, reactStringReplace(part, hashtag, match => {
+		linkedStatusText.forEach((part, i) => {
+			linkedStatusText.splice(i, 1, reactStringReplace(part, hashtag, match => {
 				const comp = <Link key={index} to={`/hashtag/${match.substring(1)}`} className='status-link' data-type='hashtag'>{match}</Link>
 				index++
 				return comp
@@ -47,8 +47,8 @@ const StatusViewContainer: FC<Props> = props => {
 	})
 
 	mentions.forEach(mention => {
-		linkedStatus.forEach((part, i) => {
-			linkedStatus.splice(i, 1, reactStringReplace(part, mention, match => {
+		linkedStatusText.forEach((part, i) => {
+			linkedStatusText.splice(i, 1, reactStringReplace(part, mention, match => {
 				const comp = <Link key={index} to={`/user/${match.substring(1)}`} className='status-link' data-type='mention'>{match}</Link>
 				index++
 				return comp
@@ -57,8 +57,8 @@ const StatusViewContainer: FC<Props> = props => {
 	})
 
 	urls.forEach(url => {
-		linkedStatus.forEach((part, i) => {
-			linkedStatus.splice(i, 1, reactStringReplace(part, url, match => {
+		linkedStatusText.forEach((part, i) => {
+			linkedStatusText.splice(i, 1, reactStringReplace(part, url, match => {
 				const comp = <a key={index} className='status-link' href={match} target='_blank' rel='noopener noreferrer'>{match}</a>
 				index++
 				return comp
@@ -71,11 +71,10 @@ const StatusViewContainer: FC<Props> = props => {
 	const date = `${months[new Date(status.timestamp).getMonth()]} ${new Date(status.timestamp).getDate()}`
 
 	const viewstate = {
-		id: status.id,
+		status,
 		user,
 		date,
-		linkedStatus,
-		attachment: status.attachment,
+		linkedStatusText,
 	}
 
 	const handlers = {

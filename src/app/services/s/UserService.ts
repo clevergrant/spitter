@@ -12,7 +12,9 @@ import {
 	UserCleanPayload,
 	GetUserDone,
 	UserClean,
-	GetUserListDone,
+	GetFollowersDone,
+	GetFollowingDone,
+	GetUsersDone,
 } from 'app/interfaces/user'
 
 class UserService implements IUserService {
@@ -29,14 +31,15 @@ class UserService implements IUserService {
 		userError: (error: Error) => ({ type: this.types.USER_ERROR, payload: { error } }),
 		getUserSuccess: (user: User) => ({ type: this.types.GET_USER_SUCCESS, payload: { user } }),
 		getUsersSuccess: (users: User[]) => ({ type: this.types.GET_USERS_SUCCESS, payload: { users } }),
-		getUserListSuccess: (users: string[]) => ({ type: this.types.GET_USER_LIST_SUCCESS, payload: { users } }),
+		getFollowersSuccess: (followers: string[]) => ({ type: this.types.GET_FOLLOWERS_SUCCESS, payload: { followers } }),
+		getFollowingSuccess: (following: string[]) => ({ type: this.types.GET_FOLLOWING_SUCCESS, payload: { following } }),
 		userClean: (payload: UserCleanPayload) => ({ type: this.types.USER_CLEAN, payload }),
 	}
 
 	// default store
 
 	readonly store: UserStore = {
-		lastId: ``,
+		lastKey: ``,
 		numResults: 5,
 		loading: false,
 		validationMessage: ``,
@@ -74,8 +77,9 @@ class UserService implements IUserService {
 				...store,
 				user: action.payload.user ? undefined : store.user,
 				users: action.payload.users ? undefined : store.users,
-				userList: action.payload.userList ? undefined : store.userList,
-				lastId: ``,
+				followers: action.payload.followers ? undefined : store.followers,
+				following: action.payload.following ? undefined : store.following,
+				lastKey: ``,
 			}
 
 		case UserTypes.GET_USER_SUCCESS:
@@ -94,11 +98,20 @@ class UserService implements IUserService {
 				validationMessage: ``,
 			}
 
-		case UserTypes.GET_USER_LIST_SUCCESS:
+		case UserTypes.GET_FOLLOWERS_SUCCESS:
 			return {
 				...store,
-				userList: [...(store.userList ? store.userList : []), ...action.payload.users],
-				lastId: action.payload.users[action.payload.users.length - 1],
+				userList: [...(store.followers ? store.followers : []), ...action.payload.followers],
+				lastKey: action.payload.followers[action.payload.followers.length - 1],
+				loading: false,
+				validationMessage: ``,
+			}
+
+		case UserTypes.GET_FOLLOWING_SUCCESS:
+			return {
+				...store,
+				userList: [...(store.following ? store.following : []), ...action.payload.following],
+				lastKey: action.payload.following[action.payload.following.length - 1],
 				loading: false,
 				validationMessage: ``,
 			}
@@ -124,37 +137,52 @@ class UserService implements IUserService {
 		}
 	}
 
-	readonly getFollowers = (alias: string): UserResult<GetUserListDone> => async (dispatch, getState, { awsProxy }) => {
+	readonly getUsers = (aliases: string[]): UserResult<GetUsersDone> => async (dispatch, _getState, { awsProxy }) => {
+
+		dispatch(this.actions.userStart())
+
+		try {
+
+			const users: User[] = await awsProxy.getUsers(aliases)
+			return dispatch(this.actions.getUsersSuccess(users))
+
+		} catch (error) {
+			return dispatch(this.actions.userError(error))
+		}
+
+	}
+
+	readonly getFollowers = (alias: string): UserResult<GetFollowersDone> => async (dispatch, getState, { awsProxy }) => {
 
 		const {
-			lastId,
+			lastKey: lastId,
 			numResults,
 		} = getState()
 
 		dispatch(this.actions.userStart())
 
 		try {
-			const users = await awsProxy.listFollowers(alias, lastId, numResults)
-			if (!users.length) return dispatch(this.actions.userAbort())
-			return dispatch(this.actions.getUserListSuccess(users))
+			const followers = await awsProxy.listFollowers(alias, lastId, numResults)
+			if (!followers.length) return dispatch(this.actions.userAbort())
+			return dispatch(this.actions.getFollowersSuccess(followers))
 		} catch (error) {
 			return dispatch(this.actions.userError(error))
 		}
 	}
 
-	readonly getFollowing = (alias: string): UserResult<GetUserListDone> => async (dispatch, getState, { awsProxy }) => {
+	readonly getFollowing = (alias: string): UserResult<GetFollowingDone> => async (dispatch, getState, { awsProxy }) => {
 
 		const {
-			lastId,
+			lastKey,
 			numResults,
 		} = getState()
 
 		dispatch(this.actions.userStart())
 
 		try {
-			const users = await awsProxy.listFollowing(alias, lastId, numResults)
+			const users = await awsProxy.listFollowing(alias, lastKey, numResults)
 			if (!users.length) return dispatch(this.actions.userAbort())
-			return dispatch(this.actions.getUserListSuccess(users))
+			return dispatch(this.actions.getFollowingSuccess(users))
 		} catch (error) {
 			return dispatch(this.actions.userError(error))
 		}

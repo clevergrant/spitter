@@ -5,13 +5,11 @@ import { connect } from 'react-redux'
 
 import { Status, User } from 'app/models'
 
-import { actions, RootStore } from 'app/store'
-import { GetFeedDone, StatusCleanPayload, StatusClean } from 'app/store/status/types'
-import {
-	GetUsersDone,
-	UserCleanPayload,
-	UserClean,
-} from 'app/store/user/types'
+import { RootStore } from 'app/services/store'
+import services from 'app/services'
+
+import { StatusCleanPayload, GetFeedDone, StatusClean } from 'app/interfaces/status'
+import { UserCleanPayload, UserClean, GetUsersDone } from 'app/interfaces/user'
 
 import { Feed } from 'ui/components'
 
@@ -21,8 +19,8 @@ interface Props {
 	feed?: Status[]
 	loading: boolean
 	getFeed: (alias: string) => Promise<GetFeedDone>
-	getUsers: (aliases: string[]) => Promise<GetUsersDone>
 	cleanDataStore: (store: StatusCleanPayload) => Promise<StatusClean>
+	getUsers: (aliases: string[]) => Promise<GetUsersDone>
 	cleanUserStore: (store: UserCleanPayload) => Promise<UserClean>
 }
 
@@ -103,10 +101,10 @@ const mapStoreToProps = (store: RootStore) => ({
 })
 
 const mapDispatchToProps = {
-	getFeed: actions.getFeed,
-	getUsers: actions.getUsers,
-	cleanUserStore: actions.cleanUserStore,
-	cleanDataStore: actions.cleanStatusStore,
+	getFeed: services.statusService.getFeed,
+	cleanDataStore: services.statusService.cleanStatusStore,
+	getUsers: services.userService.getUsers,
+	cleanUserStore: services.userService.cleanUserStore,
 }
 
 export default connect(mapStoreToProps, mapDispatchToProps)(FeedContainer)

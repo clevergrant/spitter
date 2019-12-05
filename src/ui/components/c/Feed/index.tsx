@@ -36,7 +36,7 @@ const Feed: FC<Props> = props => {
 						const user = users.find(u => u.alias === status.alias)
 
 						return user ?
-							<StatusViewContainer key={status.id} status={status} user={user} />
+							<StatusViewContainer key={`${status.alias}${status.timestamp}`} status={status} user={user} />
 							:
 							null
 					})

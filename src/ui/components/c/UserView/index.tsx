@@ -11,6 +11,8 @@ import './style.css'
 interface Props {
 	viewstate: {
 		user: User
+		followers: string[]
+		following: string[]
 		photo?: Attachment
 		self?: boolean
 	}
@@ -23,6 +25,8 @@ const UserView: FC<Props> = props => {
 
 	const {
 		user,
+		followers,
+		following,
 		self,
 	} = props.viewstate
 
@@ -52,8 +56,8 @@ const UserView: FC<Props> = props => {
 					<p>@{user.alias}</p>
 
 					<p className='follow'>
-						<Link to={`/user/${user.alias}/following`}><span>{user.following.length}</span> Following</Link>
-						<Link to={`/user/${user.alias}/followers`}><span>{user.followers.length}</span> Followers</Link>
+						<Link to={`/user/${user.alias}/following`}><span>{following.length}</span> Following</Link>
+						<Link to={`/user/${user.alias}/followers`}><span>{followers.length}</span> Followers</Link>
 					</p>
 
 				</div>

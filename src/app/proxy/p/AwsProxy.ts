@@ -5,13 +5,13 @@ export default class AwsProxy {
 
 	private ___baseUrl = `https://42l3t7qs2l.execute-api.us-west-2.amazonaws.com/v1`
 
-	login = async (alias: string, password: string) => {
+	public login = async (alias: string, password: string) => {
 		const { username, attributes } = await Auth.signIn(alias, password)
 		const imgSrc = await Storage.get(attributes.picture) as string
 		return new User(attributes.name, username, new Attachment(imgSrc, AttachmentType.PHOTO))
 	}
 
-	register = async (name: string, alias: string, password: string, photo: Attachment) => {
+	public register = async (name: string, alias: string, password: string, photo: Attachment) => {
 
 		if (!photo.file) throw new Error(`You didn't select a picture somehow`)
 
@@ -28,139 +28,119 @@ export default class AwsProxy {
 				name,
 				picture: key,
 			},
+		}).then(() => {
+			this.___post(`${this.___baseUrl}/user`, new User(name, alias, photo))
 		})
+
+		return this.login(alias, password)
 	}
 
-	logout = (global: boolean) => Auth.signOut({ global })
+	public logout = (global: boolean) => Auth.signOut({ global })
 
-	check = async () => {
+	public check = async () => {
 		const { username, attributes } = await Auth.currentAuthenticatedUser()
-		const imgSrc = await Storage.get(attributes.picture) as string
-		return new User(attributes.name, username, new Attachment(imgSrc, AttachmentType.PHOTO))
+		const user = await this.___get<User>(`${this.___baseUrl}/${username}`)
+		const src = await Storage.get(user.photo.src) as string
+		return new User(attributes.name, username, new Attachment(src, AttachmentType.PHOTO))
 	}
 
-	getAllUsers = async () => {
+	public editUser = async (user: User) =>
+		this.___patch<User, User>(`${this.___baseUrl}/${user.alias}`, user)
+			.then(u => new User(u.name, u.alias, new Attachment(u.photo.src, AttachmentType.PHOTO)))
 
-		return [] as User[]
+	public getUser = async (alias: string) =>
+		this.___get<User>(`${this.___baseUrl}/${alias}`)
+			.then(u => new User(u.name, u.alias, new Attachment(u.photo.src, AttachmentType.PHOTO)))
+
+	public getUsers = async (aliases: string[]) =>
+		this.___get<User[]>(`${this.___baseUrl}/users?aliases=${JSON.stringify(aliases)}`)
+			.then(uu => uu.map(u => new User(u.name, u.alias, new Attachment(u.photo.src, u.photo.attachmentType))))
+
+	public getStory = async (alias: string, lastKey: string, numResults: number) =>
+		this.___get<Status[]>(`${this.___baseUrl}/${alias}/story/${lastKey}/${numResults}`)
+			.then(ss => ss.map(obj => {
+				const s = new Status(obj.alias, obj.text)
+				s.timestamp = obj.timestamp
+				if (obj.attachment) s.attachment = new Attachment(obj.attachment.src, obj.attachment.attachmentType)
+				return s
+			}))
+
+	public getFeed = async (alias: string, lastKey: string, numResults: number) =>
+		this.___get<Status[]>(`${this.___baseUrl}/${alias}/feed/${lastKey}/${numResults}`)
+			.then(ss => ss.map(s => {
+				const status = new Status(s.alias, s.text)
+				status.timestamp = s.timestamp
+				if (s.attachment) status.attachment = new Attachment(s.attachment.src, s.attachment.attachmentType)
+				return status
+			}))
+
+	public getHashtags = async (hashtag: string, lastKey: string, numResults: number) =>
+		this.___get<Status[]>(`${this.___baseUrl}/status/hashtag/${hashtag}/${lastKey}/${numResults}`)
+			.then(ss => ss.map(s => {
+				const status = new Status(s.alias, s.text)
+				status.timestamp = s.timestamp
+				if (s.attachment) status.attachment = new Attachment(s.attachment.src, s.attachment.attachmentType)
+				return status
+			}))
+
+	public follow = (alias: string, followee: string) =>
+		this.___post<string>(`${this.___baseUrl}/${alias}/following?followee=${followee}`)
+
+	public unfollow = (alias: string, followee: string) =>
+		this.___delete<string>(`${this.___baseUrl}/${alias}/following?followee=${followee}`)
+
+	public listFollowing = (alias: string, lastKey: string, numResults: number) =>
+		this.___get<string[]>(`${this.___baseUrl}/${alias}/following/${lastKey}/${numResults}`)
+
+	public listFollowers = (alias: string, lastKey: string, numResults: number) =>
+		this.___get<string[]>(`${this.___baseUrl}/${alias}/followers/${lastKey}/${numResults}`)
+
+	public addStatus = (status: Status) =>
+		this.___post<Status, Status>(`${this.___baseUrl}/status`, status)
+
+	public getStatus = (alias: string, timestamp: number) =>
+		this.___get<Status>(`${this.___baseUrl}/status/${alias}/${timestamp}`)
+			.then(s => {
+				const status = new Status(s.alias, s.text)
+				status.timestamp = s.timestamp
+				if (s.attachment) status.attachment = new Attachment(s.attachment.src, s.attachment.attachmentType)
+				return status
+			})
+
+	private async ___get<R>(url: string) {
+		return fetch(url).then(async r => (await r.json()).body as R)
 	}
 
-	public getStory = (alias: string, lastId: string, numResults: number) => new Promise<Status[]>((resolve, reject) => {
-		fetch(`${this.___baseUrl}/${alias}/story/${lastId === `` ? -1 : lastId}/${numResults}`).then(r => r.json())
-			.then(json => {
-				const {
-					statuses,
-				} = json
-				const typedStatuses = statuses.map((obj: Status) => {
-					const newStatus = new Status(obj.alias, obj.text, obj.attachment as Attachment)
-					newStatus.id = obj.id
-					newStatus.timestamp = obj.timestamp
-					return newStatus
-				})
-				resolve(typedStatuses)
-			})
-			.catch(reject)
-	})
-
-	public getFeed = (alias: string, lastId: string, numResults: number) => new Promise<Status[]>((resolve, reject) => {
-		fetch(`${this.___baseUrl}/${alias}/feed/${lastId === `` ? -1 : lastId}/${numResults}`)
-			.then(r => r.json())
-			.then(json => {
-				const {
-					statuses,
-				} = json
-				const typedStatuses = statuses.map((obj: Status) => {
-					const newStatus = new Status(obj.alias, obj.text, obj.attachment as Attachment)
-					newStatus.id = obj.id
-					newStatus.timestamp = obj.timestamp
-					return newStatus
-				})
-				resolve(typedStatuses)
-			})
-			.catch(reject)
-	})
-
-	public follow = (alias: string) => new Promise<string>((resolve, reject) => {
-		fetch(`${this.___baseUrl}/friends/${alias}`, {
-			method: `POST`,
-		}).then(r => r.json())
-			.then(json => {
-				resolve(json.message)
-			})
-			.catch(reject)
-	})
-
-	public unfollow = (alias: string) => new Promise<string>((resolve, reject) => {
-		fetch(`${this.___baseUrl}/friends/${alias}`, {
-			method: `DELETE`,
-		}).then(r => r.json())
-			.then(json => {
-				resolve(json.message)
-			})
-			.catch(reject)
-	})
-
-	public listFollowing = (alias: string, lastId: string, numResults: number) => new Promise<string[]>((resolve, reject) => {
-		fetch(`${this.___baseUrl}/${alias}/following/${lastId === `` ? -1 : lastId}/${numResults}`).then(r => r.json())
-			.then(json => {
-				resolve(json.users.map((u: { alias: any }) => u.alias))
-			})
-			.catch(reject)
-	})
-
-	public listFollowers = (alias: string, lastId: string, numResults: number) => new Promise<string[]>((resolve, reject) => {
-		fetch(`${this.___baseUrl}/${alias}/followers/${lastId === `` ? -1 : lastId}/${numResults}`).then(r => r.json())
-			.then(json => {
-				resolve(json.users.map((u: { alias: any }) => u.alias))
-			})
-			.catch(reject)
-	})
-
-	public addStatus = (status: Status) => new Promise<string>((resolve, reject) => {
-		fetch(`${this.___baseUrl}/status`, {
+	private async ___post<R, B = {}>(url: string, body?: B, params: RequestInit = {}) {
+		return fetch(url, {
+			...params,
 			method: `POST`,
 			headers: {
 				'Content-Type': `application/json`,
 			},
-			body: JSON.stringify(status),
-		}).then(r => r.json())
-			.then(json => {
-				resolve(json.message)
-			})
-			.catch(reject)
-	})
+			body: JSON.stringify(body),
+		}).then(async r => (await r.json()).body as R)
+	}
 
-	public getStatus = (id: string) => new Promise<Status>((resolve, reject) => {
-		fetch(`${this.___baseUrl}/status/${id}`).then(r => r.json())
-			.then(json => {
-				const {
-					status,
-				} = json
-				const typedStatus = new Status(status.alias, status.text, status.attachment as Attachment)
-				typedStatus.id = status.id
-				typedStatus.timestamp = status.timestamp
-				resolve(typedStatus)
-			})
-			.catch(reject)
-	})
+	private async ___delete<R, B = {}>(url: string, body?: B, params: RequestInit = {}) {
+		return fetch(url, {
+			...params,
+			method: `DELETE`,
+			headers: {
+				'Content-Type': `application/json`,
+			},
+			body: JSON.stringify(body),
+		}).then(async r => (await r.json()).body as R)
+	}
 
-	public getHashtags = (hashtag: string, lastId: string, numResults: number) => new Promise<Status[]>((resolve, reject) => {
-		fetch(`${this.___baseUrl}/status/hashtag/${hashtag}/${lastId === `` ? -1 : lastId}/${numResults}`).then(r => r.json())
-			.then(json => {
-				const {
-					statuses,
-				} = json
-				const typedStatuses = statuses.map((obj: Status) => {
-					const newStatus = new Status(obj.alias, obj.text, obj.attachment as Attachment)
-					newStatus.id = obj.id
-					newStatus.timestamp = obj.timestamp
-					return newStatus
-				})
-				resolve(typedStatuses)
-			})
-			.catch(reject)
-	})
-
-	public getUser = async (alias: string) => {
-		return new User(``, alias, new Attachment(``, AttachmentType.PHOTO))
+	private async ___patch<R, B = {}>(url: string, body?: B, params: RequestInit = {}) {
+		return fetch(url, {
+			...params,
+			method: `PATCH`,
+			headers: {
+				'Content-Type': `application/json`,
+			},
+			body: JSON.stringify(body),
+		}).then(async r => (await r.json()).body as R)
 	}
 }

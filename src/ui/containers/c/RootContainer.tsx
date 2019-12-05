@@ -3,8 +3,10 @@ import { connect } from 'react-redux'
 
 import { User } from 'app/models'
 
-import { actions, RootStore } from 'app/store'
-import { LoginDone, LogoutDone } from 'app/store/auth/types'
+import services from 'app/services'
+import { RootStore } from 'app/services/store'
+
+import { LoginDone, LogoutDone } from 'app/interfaces/auth'
 
 import { Root } from 'ui/components'
 
@@ -12,7 +14,7 @@ interface Props {
 	user?: User
 	loading: boolean
 	check: () => Promise<LoginDone>
-	logout: () => Promise<LogoutDone>
+	logout: (global: boolean) => Promise<LogoutDone>
 }
 
 const RootContainer: FC<Props> = props => {
@@ -35,7 +37,9 @@ const RootContainer: FC<Props> = props => {
 
 	// Handlers
 
-	const handleLogout = logout
+	const handleLogout = () => {
+		logout(true)
+	}
 
 	// View
 
@@ -57,9 +61,9 @@ const mapStoreToProps = (store: RootStore) => ({
 })
 
 const mapDispatchToProps = {
-	check: actions.check,
-	login: actions.login,
-	logout: actions.logout,
+	check: services.authService.check,
+	login: services.authService.login,
+	logout: services.authService.logout,
 }
 
 export default connect(mapStoreToProps, mapDispatchToProps)(RootContainer)

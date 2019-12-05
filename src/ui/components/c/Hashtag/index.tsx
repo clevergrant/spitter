@@ -30,7 +30,7 @@ const Hashtag: FC<Props> = props => {
 			{
 				hashtags.map(status => {
 					const user = users.find(u => u.alias === status.alias)
-					return user ? <StatusViewContainer key={status.id} status={status} user={user} /> : null
+					return user ? <StatusViewContainer key={`${status.alias}${status.timestamp}`} status={status} user={user} /> : null
 				})
 			}
 		</div>

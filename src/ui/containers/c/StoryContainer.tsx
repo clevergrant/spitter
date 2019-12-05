@@ -5,10 +5,12 @@ import { connect } from 'react-redux'
 
 import { Status, User } from 'app/models'
 
-import { actions, RootStore } from 'app/store'
-import { GetStoryDone, StatusCleanPayload, StatusClean } from 'app/store/status/types'
+import { RootStore } from 'app/services/store'
+
+import { GetStoryDone, StatusCleanPayload, StatusClean } from 'app/interfaces/status'
 
 import { Feed } from 'ui/components'
+import services from 'app/services'
 
 interface Props {
 	user: User
@@ -69,8 +71,8 @@ const mapStoreToProps = (store: RootStore) => ({
 })
 
 const mapDispatchToProps = {
-	getStory: actions.getStory,
-	cleanDataStore: actions.cleanStatusStore,
+	getStory: services.statusService.getStory,
+	cleanDataStore: services.statusService.cleanStatusStore,
 }
 
 export default connect(mapStoreToProps, mapDispatchToProps)(StoryContainer)

@@ -1,26 +1,17 @@
-import short from 'short-uuid'
-
 import { Attachment } from './Attachment'
-
-const t = short()
 
 export class Status {
 
-	public id: string
-
 	public alias: string
 	public text: string
-
 	public attachment?: Attachment
-
-	public timestamp: Date
+	public timestamp: number
 
 	constructor(alias: string, text: string, attachment?: Attachment) {
-		this.id = t.new()
 		this.alias = alias
 		this.text = text
 		this.attachment = attachment
-		this.timestamp = new Date()
+		this.timestamp = Date.now()
 	}
 
 	public getUrls(): string[] {

@@ -4,20 +4,18 @@ import { connect } from 'react-redux'
 
 import { Status, User } from 'app/models'
 
-import { actions, RootStore } from 'app/store'
-import { GetHashtagDone, StatusCleanPayload, StatusClean } from 'app/store/status/types'
-import {
-	// GetUsersDone,
-	UserCleanPayload,
-	UserClean,
-} from 'app/store/user/types'
+import { GetHashtagDone, StatusClean, StatusCleanPayload } from 'app/interfaces/status'
+import { GetUsersDone, UserClean, UserCleanPayload } from 'app/interfaces/user'
+
+import services from 'app/services'
+import { RootStore } from 'app/services/store'
 
 import { Hashtag } from 'ui/components'
 
 interface Props {
 	users?: User[]
 	hashtags?: Status[]
-	// getUsers: (aliases: string[]) => Promise<GetUsersDone>
+	getUsers: (aliases: string[]) => Promise<GetUsersDone>
 	getHashtag: (hashtag: string) => Promise<GetHashtagDone>
 	cleanDataStore: (store: StatusCleanPayload) => Promise<StatusClean>
 	cleanUserStore: (store: UserCleanPayload) => Promise<UserClean>
@@ -32,7 +30,7 @@ const HashtagViewContainer: FC<Props> = props => {
 	const {
 		users,
 		hashtags,
-		// getUsers,
+		getUsers,
 		getHashtag,
 		cleanDataStore,
 		cleanUserStore,
@@ -42,22 +40,22 @@ const HashtagViewContainer: FC<Props> = props => {
 		() => {
 			if (!hashtag) return
 			else if (!hashtags) getHashtag(hashtag)
-			// else if (!users) {
+			else if (!users) {
 
-			// 	const usersneeded = hashtags.reduce((acc: string[], status: Status) => {
-			// 		if (!acc.find(alias => alias === status.alias))
-			// 			acc.push(status.alias)
-			// 		return acc
-			// 	}, [])
+				const usersNeeded = hashtags.reduce((acc: string[], status: Status) => {
+					if (!acc.find(alias => alias === status.alias))
+						acc.push(status.alias)
+					return acc
+				}, [])
 
-			// 	getUsers(usersneeded)
-			// }
+				getUsers(usersNeeded)
+			}
 		},
 		[
 			hashtag,
 			users,
 			hashtags,
-			// getUsers,
+			getUsers,
 			getHashtag,
 		]
 	)
@@ -88,10 +86,10 @@ const mapStoreToProps = (store: RootStore) => ({
 })
 
 const mapDispatchToProps = {
-	getHashtag: actions.getHashtag,
-	// getUsers: actions.getUsers,
-	cleanUserStore: actions.cleanUserStore,
-	cleanDataStore: actions.cleanStatusStore,
+	getHashtag: services.statusService.getHashtags,
+	cleanDataStore: services.statusService.cleanStatusStore,
+	getUsers: services.userService.getUsers,
+	cleanUserStore: services.userService.cleanUserStore,
 }
 
 export default connect(mapStoreToProps, mapDispatchToProps)(HashtagViewContainer)

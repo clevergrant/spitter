@@ -2,7 +2,8 @@ import { createStore, combineReducers, applyMiddleware } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import thunk from 'redux-thunk'
 
-import services, { Services } from 'app/services'
+import proxies from 'app/proxy'
+import services from 'app/services'
 
 import { AuthStore } from 'app/interfaces/auth'
 import { StatusStore } from 'app/interfaces/status'
@@ -14,7 +15,7 @@ export interface RootStore {
 	readonly userStore: UserStore
 }
 
-const makeStore = (services: Services) => createStore(
+const store = createStore(
 
 	// This is what the store looks like
 	combineReducers<RootStore>({
@@ -31,11 +32,9 @@ const makeStore = (services: Services) => createStore(
 	},
 
 	composeWithDevTools(
-		applyMiddleware(thunk.withExtraArgument(services)),
+		applyMiddleware(thunk.withExtraArgument(proxies)),
 	),
 
 )
-
-const store = makeStore(services)
 
 export default store

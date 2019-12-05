@@ -20,8 +20,6 @@ import './style-global.css'
 import './style.css'
 
 interface Props {
-	authState?: string
-	authData?: any
 	viewstate: {
 		user?: User
 		loading: boolean
@@ -66,7 +64,7 @@ const Root: FC<Props> = props => {
 									<HashtagContainer />
 								</Route>
 
-								<Route path='/status/:id'>
+								<Route path='/status/:alias/:timestamp'>
 									<StatusContainer />
 								</Route>
 

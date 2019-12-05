@@ -41,7 +41,7 @@ class StatusService implements IStatusService {
 	// default store
 
 	readonly store: StatusStore = {
-		lastId: ``,
+		lastKey: `-1`,
 		numResults: 5,
 		loading: false,
 		validationMessage: ``,
@@ -81,14 +81,14 @@ class StatusService implements IStatusService {
 				feed: action.payload.feed ? undefined : store.feed,
 				hashtags: action.payload.hashtags ? undefined : store.hashtags,
 				status: action.payload.status ? undefined : store.status,
-				lastId: ``,
+				lastKey: `-1`,
 			}
 
 		case StatusTypes.GET_STORY_SUCCESS:
 			return {
 				...store,
 				story: [...(store.story ? store.story : []), ...action.payload.statuses],
-				lastId: action.payload.statuses[action.payload.statuses.length - 1].id,
+				lastKey: `${action.payload.statuses[action.payload.statuses.length - 1].timestamp}`,
 				loading: false,
 				validationMessage: ``,
 			}
@@ -97,7 +97,7 @@ class StatusService implements IStatusService {
 			return {
 				...store,
 				feed: [...(store.feed ? store.feed : []), ...action.payload.statuses],
-				lastId: action.payload.statuses[action.payload.statuses.length - 1].id,
+				lastKey: `${action.payload.statuses[action.payload.statuses.length - 1].timestamp}`,
 				loading: false,
 				validationMessage: ``,
 			}
@@ -106,7 +106,7 @@ class StatusService implements IStatusService {
 			return {
 				...store,
 				hashtags: [...(store.hashtags ? store.hashtags : []), ...action.payload.statuses],
-				lastId: action.payload.statuses[action.payload.statuses.length - 1].id,
+				lastKey: `${action.payload.statuses[action.payload.statuses.length - 1].timestamp}`,
 				loading: false,
 				validationMessage: ``,
 			}
@@ -130,14 +130,15 @@ class StatusService implements IStatusService {
 	readonly getStory = (alias: string): StatusResult<GetStoryDone> => async (dispatch, getState, { awsProxy }) => {
 
 		const {
-			lastId,
+			lastKey: lastId,
 			numResults,
 		} = getState()
 
 		dispatch(this.actions.statusStart())
 
 		try {
-			const statuses = await awsProxy.getStory(alias, lastId, numResults)
+			const lid = lastId ? lastId : `-1`
+			const statuses = await awsProxy.getStory(alias, lid, numResults)
 			if (!statuses.length) return dispatch(this.actions.statusAbort())
 			return dispatch(this.actions.getStorySuccess(statuses))
 		} catch (error) {
@@ -148,14 +149,15 @@ class StatusService implements IStatusService {
 	readonly getFeed = (alias: string): StatusResult<GetFeedDone> => async (dispatch, getState, { awsProxy }) => {
 
 		const {
-			lastId,
+			lastKey: lastId,
 			numResults,
 		} = getState()
 
 		dispatch(this.actions.statusStart())
 
 		try {
-			const statuses = await awsProxy.getFeed(alias, lastId, numResults)
+			const lid = lastId ? lastId : `-1`
+			const statuses = await awsProxy.getFeed(alias, lid, numResults)
 			if (!statuses.length) return dispatch(this.actions.statusAbort())
 			return dispatch(this.actions.getFeedSuccess(statuses))
 		} catch (error) {
@@ -166,14 +168,15 @@ class StatusService implements IStatusService {
 	readonly getHashtags = (hashtag: string): StatusResult<GetHashtagDone> => async (dispatch, getState, { awsProxy }) => {
 
 		const {
-			lastId,
+			lastKey: lastId,
 			numResults,
 		} = getState()
 
 		dispatch(this.actions.statusStart())
 
 		try {
-			const statuses = await awsProxy.getHashtags(hashtag, lastId, numResults)
+			const lid = lastId ? lastId : `-1`
+			const statuses = await awsProxy.getHashtags(hashtag, lid, numResults)
 			if (!statuses.length) return dispatch(this.actions.statusAbort())
 			return dispatch(this.actions.getHashtagSuccess(statuses))
 		} catch (error) {
@@ -181,10 +184,10 @@ class StatusService implements IStatusService {
 		}
 	}
 
-	readonly getStatus = (id: string): StatusResult<GetStatusDone> => async (dispatch, _getState, { awsProxy }) => {
+	readonly getStatus = (alias: string, timestamp: number): StatusResult<GetStatusDone> => async (dispatch, _getState, { awsProxy }) => {
 		dispatch(this.actions.statusStart())
 		try {
-			const status = await awsProxy.getStatus(id)
+			const status = await awsProxy.getStatus(alias, timestamp)
 			return dispatch(this.actions.getStatusSuccess(status))
 		} catch (error) {
 			return dispatch(this.actions.statusError(error))
