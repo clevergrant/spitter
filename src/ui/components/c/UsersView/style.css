@@ -5,6 +5,21 @@
 	border-top: none;
 }
 
+.users-list h3 {
+	margin: 0;
+	padding: 1rem;
+	border: 2px solid var(--color-border);
+	border-top: none;
+	border-bottom: none;
+}
+
+.users-list h3:last-child {
+	margin: 0;
+	padding: 1rem;
+	border: 2px solid var(--color-border);
+	border-top: none;
+}
+
 .profile {
 	display: flex;
 	border: 2px solid var(--color-border);

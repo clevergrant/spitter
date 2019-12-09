@@ -14,6 +14,7 @@ interface Props {
 		users: User[]
 		feed: Status[]
 		endEl: React.RefObject<HTMLDivElement>
+		showSpitter?: boolean
 	}
 }
 
@@ -23,12 +24,13 @@ const Feed: FC<Props> = props => {
 		users,
 		feed,
 		endEl,
+		showSpitter = true,
 	} = props.viewstate
 
 	return (
 		<div id='feed'>
 
-			<SpitterContainer />
+			{showSpitter && <SpitterContainer />}
 
 			<div>
 				{

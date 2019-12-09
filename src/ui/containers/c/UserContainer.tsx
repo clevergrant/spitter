@@ -1,24 +1,30 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState, ChangeEvent } from 'react'
 import { useParams } from 'react-router-dom'
 import { connect } from 'react-redux'
 
-import { User } from 'app/models'
+import { User, Attachment, AttachmentType } from 'app/models'
 
 import services from 'app/services'
 import { RootStore } from 'app/services/store'
 
 import { UserView } from 'ui/components'
-import { UserCleanPayload, UserClean, GetUserDone, GetFollowersDone, GetFollowingDone } from 'app/interfaces/user'
+import { UserCleanPayload, UserClean, GetUserDone, GetFollowersDone, GetFollowingCountDone, GetFollowerCountDone, CheckFollowingDone } from 'app/interfaces/user'
+import { EditUserDone } from 'app/interfaces/auth'
 
 interface Props {
 	user?: User
 	fetchedUser?: User
-	followers?: string[]
-	following?: string[]
+	isFollower?: boolean
+	followerCount?: number
+	followingCount?: number
 	getUser: (alias: string) => Promise<GetUserDone>
-	getFollowers: (alias: string) => Promise<GetFollowersDone>
-	getFollowing: (alias: string) => Promise<GetFollowingDone>
+	checkFollowing: (follower: string, followee: string) => Promise<CheckFollowingDone>
+	getFollowerCount: (alias: string) => Promise<GetFollowerCountDone>
+	getFollowingCount: (alias: string) => Promise<GetFollowingCountDone>
+	follow: (follower: string, followee: string) => Promise<GetFollowersDone>
+	unfollow: (follower: string, followee: string) => Promise<GetFollowersDone>
 	cleanUserStore: (store: UserCleanPayload) => Promise<UserClean>
+	editUser: (user: User) => Promise<EditUserDone>
 }
 
 const UserContainer: FC<Props> = props => {
@@ -30,19 +36,53 @@ const UserContainer: FC<Props> = props => {
 	const {
 		user,
 		fetchedUser,
-		followers = [],
-		following = [],
+		followerCount,
+		followingCount,
 		getUser,
-		getFollowers,
-		getFollowing,
+		getFollowerCount,
+		getFollowingCount,
+		follow,
+		unfollow,
 		cleanUserStore,
+		isFollower,
+		checkFollowing,
+		editUser,
 	} = props
 
 	const [self, setSelf] = useState(true)
-	const [photo, setPhoto] = useState()
 
-	const handlePhotoChange = () => {
-		setPhoto(``)
+	const handlePhotoChange = async (e: ChangeEvent<HTMLInputElement>) => {
+		if (!user) return
+		try {
+			const list: FileList = e.target.files as FileList
+			if (list.length > 0) {
+				const file: File = list[0]
+				const attachment = new Attachment(
+					URL.createObjectURL(file),
+					AttachmentType.PHOTO,
+					file
+				)
+				editUser(new User(
+					user.name,
+					user.alias,
+					attachment
+				))
+			}
+		} catch (error) {
+			alert(error.message)
+		}
+	}
+
+	const handleFollow = (followee: string) => (e: React.MouseEvent<HTMLButtonElement>) => {
+		e.preventDefault()
+		if (!user) return
+		follow(user.alias, followee)
+	}
+
+	const handleUnfollow = (followee: string) => (e: React.MouseEvent<HTMLButtonElement>) => {
+		e.preventDefault()
+		if (!user) return
+		unfollow(user.alias, followee)
 	}
 
 	useEffect(
@@ -52,9 +92,12 @@ const UserContainer: FC<Props> = props => {
 			else if (!fetchedUser) {
 				setSelf(alias === user.alias)
 				getUser(alias)
-				getFollowers(alias)
-				getFollowing(alias)
-			}
+			} else if (isFollower === undefined)
+				checkFollowing(user.alias, alias)
+			else if (followerCount === undefined)
+				getFollowerCount(alias)
+			else if (followingCount === undefined)
+				getFollowingCount(alias)
 		},
 		[
 			user,
@@ -62,31 +105,37 @@ const UserContainer: FC<Props> = props => {
 			fetchedUser,
 			setSelf,
 			getUser,
-			getFollowers,
-			getFollowing,
+			isFollower,
+			followerCount,
+			followingCount,
+			checkFollowing,
+			getFollowerCount,
+			getFollowingCount,
 		]
 	)
 
 	useEffect(() => () => {
 		cleanUserStore({
 			user: true,
-			followers: true,
-			following: true,
+			followerCount: true,
+			followingCount: true,
 		})
 	}, [cleanUserStore, alias])
 
-	if (!user || !alias || !fetchedUser) return null
+	if (!user || !alias || !fetchedUser || isFollower === undefined || followerCount === undefined || followingCount === undefined) return null
 
 	const viewstate = {
 		user: fetchedUser,
-		followers,
-		following,
-		photo,
+		followerCount,
+		followingCount,
 		self,
+		isFollower,
 	}
 
 	const handlers = {
 		handlePhotoChange,
+		handleFollow,
+		handleUnfollow,
 	}
 
 	return <UserView viewstate={viewstate} handlers={handlers} />
@@ -95,15 +144,20 @@ const UserContainer: FC<Props> = props => {
 const mapStoreToProps = (store: RootStore) => ({
 	user: store.authStore.user,
 	fetchedUser: store.userStore.user,
-	followers: store.userStore.followers,
-	following: store.userStore.following,
+	isFollower: store.userStore.isFollower,
+	followerCount: store.userStore.followerCount,
+	followingCount: store.userStore.followingCount,
 })
 
 const mapDispatchToProps = {
 	getUser: services.userService.getUser,
-	getFollowers: services.userService.getFollowers,
-	getFollowing: services.userService.getFollowing,
+	checkFollowing: services.userService.checkFollowing,
+	getFollowerCount: services.userService.getFollowerCount,
+	getFollowingCount: services.userService.getFollowingCount,
+	follow: services.userService.follow,
+	unfollow: services.userService.unfollow,
 	cleanUserStore: services.userService.cleanUserStore,
+	editUser: services.authService.editUser,
 }
 
 export default connect(mapStoreToProps, mapDispatchToProps)(UserContainer)

@@ -1,0 +1,534 @@
+---
+swagger: "2.0"
+info:
+  version: "2019-11-03T09:52:40Z"
+  title: "spitter"
+host: "42l3t7qs2l.execute-api.us-west-2.amazonaws.com"
+basePath: "/v1"
+schemes:
+- "https"
+paths:
+  /status:
+    post:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "Status"
+        required: true
+        schema:
+          $ref: "#/definitions/Status"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /status/hashtag/{hashtag}:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "count"
+        in: "query"
+        required: true
+        type: "string"
+      - name: "hashtag"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "prev"
+        in: "query"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /status/{alias}/{timestamp}:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "timestamp"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "alias"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /user:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "aliases"
+        in: "query"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+    post:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "User"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /{alias}:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "alias"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+    patch:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "alias"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "User"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+  /{alias}/feed:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "count"
+        in: "query"
+        required: true
+        type: "string"
+      - name: "alias"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "prev"
+        in: "query"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /{alias}/followers:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "count"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "alias"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "prev"
+        in: "query"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /{alias}/followers/count:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "alias"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /{alias}/following:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "count"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "alias"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "prev"
+        in: "query"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+    post:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "alias"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "followee"
+        in: "query"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+    delete:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "alias"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "followee"
+        in: "query"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /{alias}/following/count:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "alias"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /{alias}/story:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "count"
+        in: "query"
+        required: true
+        type: "string"
+      - name: "alias"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "prev"
+        in: "query"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+definitions:
+  Status:
+    type: "object"
+    required:
+    - "alias"
+    - "text"
+    - "timestamp"
+    properties:
+      alias:
+        type: "string"
+      text:
+        type: "string"
+      timestamp:
+        type: "number"
+      attachment:
+        type: "object"
+        properties:
+          src:
+            type: "string"
+          attachmentType:
+            type: "string"
+        required:
+        - "attachmentType"
+        - "src"
+  Empty:
+    type: "object"
+    title: "Empty Schema"
+  User:
+    type: "object"
+    required:
+    - "alias"
+    - "name"
+    - "photo"
+    properties:
+      alias:
+        type: "string"
+      name:
+        type: "string"
+      photo:
+        type: "object"
+        properties:
+          src:
+            type: "string"
+          attachmentType:
+            type: "string"
+        required:
+        - "attachmentType"
+        - "src"

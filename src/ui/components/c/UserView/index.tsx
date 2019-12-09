@@ -1,7 +1,7 @@
-import React, { FC } from 'react'
+import React, { FC, ChangeEvent } from 'react'
 import { Link } from 'react-router-dom'
 
-import { User, Attachment } from 'app/models'
+import { User } from 'app/models'
 
 import { StoryContainer } from 'ui/containers'
 import { ImageCircle } from 'ui/components'
@@ -11,13 +11,15 @@ import './style.css'
 interface Props {
 	viewstate: {
 		user: User
-		followers: string[]
-		following: string[]
-		photo?: Attachment
+		followerCount: number
+		followingCount: number
 		self?: boolean
+		isFollower: boolean
 	}
 	handlers: {
-		handlePhotoChange?: () => void
+		handlePhotoChange?: (e: ChangeEvent<HTMLInputElement>) => void
+		handleFollow: (followee: string) => (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
+		handleUnfollow: (followee: string) => (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
 	}
 }
 
@@ -25,13 +27,16 @@ const UserView: FC<Props> = props => {
 
 	const {
 		user,
-		followers,
-		following,
+		followerCount,
+		followingCount,
 		self,
+		isFollower,
 	} = props.viewstate
 
 	const {
 		handlePhotoChange,
+		handleFollow,
+		handleUnfollow,
 	} = props.handlers
 
 	return (
@@ -56,11 +61,23 @@ const UserView: FC<Props> = props => {
 					<p>@{user.alias}</p>
 
 					<p className='follow'>
-						<Link to={`/user/${user.alias}/following`}><span>{following.length}</span> Following</Link>
-						<Link to={`/user/${user.alias}/followers`}><span>{followers.length}</span> Followers</Link>
+						<Link to={`/user/${user.alias}/following`}><span>{followingCount}</span> Following</Link>
+						<Link to={`/user/${user.alias}/followers`}><span>{followerCount}</span> Followers</Link>
 					</p>
 
 				</div>
+
+				{!self &&
+					<div className='follow-button-container'>
+						{
+							isFollower ?
+								<button onClick={handleUnfollow(user.alias)}>unfollow</button>
+								:
+								<button onClick={handleFollow(user.alias)}>follow</button>
+						}
+					</div>
+				}
+
 			</div>
 
 			<StoryContainer user={user} />

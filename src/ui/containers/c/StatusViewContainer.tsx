@@ -28,15 +28,17 @@ const StatusViewContainer: FC<Props> = props => {
 		if ((e.target as HTMLElement).tagName !== `A`) history.push(`/status/${alias}/${timestamp}`)
 	}
 
-	const hashtags = status.getHashtags()
-	const mentions = status.getMentions()
-	const urls = status.getUrls()
+	const {
+		hashtags,
+		mentions,
+		urls,
+	} = status
 
 	const linkedStatusText: any[] = [status.text]
 
 	let index = 0
 
-	hashtags.forEach(hashtag => {
+	hashtags.sort((a, b) => b.length - a.length || a.localeCompare(b)).forEach(hashtag => {
 		linkedStatusText.forEach((part, i) => {
 			linkedStatusText.splice(i, 1, reactStringReplace(part, hashtag, match => {
 				const comp = <Link key={index} to={`/hashtag/${match.substring(1)}`} className='status-link' data-type='hashtag'>{match}</Link>
@@ -46,7 +48,7 @@ const StatusViewContainer: FC<Props> = props => {
 		})
 	})
 
-	mentions.forEach(mention => {
+	mentions.sort((a, b) => b.length - a.length || a.localeCompare(b)).forEach(mention => {
 		linkedStatusText.forEach((part, i) => {
 			linkedStatusText.splice(i, 1, reactStringReplace(part, mention, match => {
 				const comp = <Link key={index} to={`/user/${match.substring(1)}`} className='status-link' data-type='mention'>{match}</Link>
@@ -56,7 +58,7 @@ const StatusViewContainer: FC<Props> = props => {
 		})
 	})
 
-	urls.forEach(url => {
+	urls.sort((a, b) => b.length - a.length || a.localeCompare(b)).forEach(url => {
 		linkedStatusText.forEach((part, i) => {
 			linkedStatusText.splice(i, 1, reactStringReplace(part, url, match => {
 				const comp = <a key={index} className='status-link' href={match} target='_blank' rel='noopener noreferrer'>{match}</a>

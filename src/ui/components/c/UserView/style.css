@@ -55,3 +55,14 @@
 	display: flex;
 	position: absolute;
 }
+
+.follow-button-container {
+	display: flex;
+	align-items: flex-start;
+	justify-content: flex-end;
+	flex: auto;
+}
+
+.follow-button-container>button {
+	color: white;
+}

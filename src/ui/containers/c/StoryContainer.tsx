@@ -60,6 +60,7 @@ const StoryContainer: FC<Props> = props => {
 		feed: story,
 		users: [user],
 		endEl,
+		showSpitter: false,
 	}
 
 	return <Feed viewstate={viewstate} />

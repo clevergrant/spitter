@@ -1,7 +1,7 @@
-import React, { FC, useState, ChangeEvent, FormEvent } from 'react'
+import React, { FC, useState, ChangeEvent, FormEvent, MouseEvent } from 'react'
 import { connect } from 'react-redux'
 
-import { Status, Attachment, AttachmentType, User } from 'app/models'
+import { Status, Attachment, User, AttachmentType } from 'app/models'
 
 import services from 'app/services'
 import { RootStore } from 'app/services/store'
@@ -9,6 +9,8 @@ import { RootStore } from 'app/services/store'
 import { AddStatusDone } from 'app/interfaces/status'
 
 import { Spitter } from 'ui/components'
+
+import { mimeToAttachmentType } from 'lib/util'
 
 interface Props {
 	user?: User
@@ -32,47 +34,45 @@ const SpitterContainer: FC<Props> = ({
 	}
 
 	const handleAttachmentChange = async (e: ChangeEvent<HTMLInputElement>) => {
-		const list: FileList = e.target.files as FileList
-
-		const el = e.target
-
-		if (list.length > 0) {
+		try {
+			const list = e.target.files as FileList
+			if (!list.length) return
 			const file: File = list[0]
-
-			const attachment: Attachment = {
-				src: ``,
-				attachmentType: AttachmentType.PHOTO,
-				file,
-			}
-
-			if (file.type.startsWith(`video/`)) attachment.attachmentType = AttachmentType.VIDEO
-
-			const getFile = new Promise<string>((resolve, reject) => {
-				const reader = new FileReader()
-				reader.onerror = reject
-				reader.onload = () => {
-					resolve(reader.result as string)
-				}
-				reader.readAsDataURL(file)
-			}).catch(error => {
-				console.error(error)
-				el.value = ``
-			})
-
-			attachment.src = await getFile as string
-
+			const attachment = new Attachment(
+				URL.createObjectURL(file),
+				mimeToAttachmentType(file.type),
+				file
+			)
 			setAttachment(attachment)
+		} catch (error) {
+			alert(error.message)
 		}
 	}
 
-	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+	const handleAddYTLink = async (e: MouseEvent<HTMLInputElement>) => {
+		e.preventDefault()
+		const link = prompt(`Input the YouTube Link:`)
+		if (link) {
+			setAttachment(new Attachment(
+				link,
+				AttachmentType.VIDEO
+			))
+		}
+	}
+
+	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 
-		if (user && attachment) {
+		if (!user) return
+		if (!spit) return
+
+		if (attachment) {
 			const newStatus: Status = new Status(user.alias, spit, attachment)
-			addStatus(newStatus)
-		}
-		console.log(e.target)
+			await addStatus(newStatus)
+		} else await addStatus(new Status(user.alias, spit))
+
+		setSpit(``)
+		setAttachment(undefined)
 	}
 
 	const viewstate = {
@@ -84,6 +84,7 @@ const SpitterContainer: FC<Props> = ({
 		removeAttachment,
 		handleSpitChange,
 		handleAttachmentChange,
+		handleAddYTLink,
 		handleSubmit,
 	}
 

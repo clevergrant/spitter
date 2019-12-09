@@ -11,6 +11,7 @@ import {
 	AuthResult,
 	LoginDone,
 	LogoutDone,
+	EditUserDone,
 } from 'app/interfaces/auth'
 
 class AuthService implements IAuthService {
@@ -27,6 +28,7 @@ class AuthService implements IAuthService {
 		authError: (error: Error) => ({ type: this.types.AUTH_ERROR, payload: { error } }),
 		loginSuccess: (user: User) => ({ type: this.types.LOGIN_SUCCESS, payload: { user } }),
 		logoutSuccess: () => ({ type: this.types.LOGOUT_SUCCESS }),
+		editUserSuccess: (user: User) => ({ type: this.types.EDIT_USER_SUCCESS, payload: { user }}),
 	}
 
 	// default store
@@ -73,6 +75,14 @@ class AuthService implements IAuthService {
 				validationMessage: ``,
 			}
 
+		case this.types.EDIT_USER_SUCCESS:
+			return {
+				...store,
+				user: action.payload.user,
+				loading: false,
+				validationMessage: ``,
+			}
+
 		default:
 			return store
 		}
@@ -115,6 +125,16 @@ class AuthService implements IAuthService {
 		try {
 			const user = await awsProxy.check()
 			return dispatch(this.actions.loginSuccess(user))
+		} catch (error) {
+			return dispatch(this.actions.authError(error))
+		}
+	}
+
+	readonly editUser = (user: User): AuthResult<EditUserDone> => async (dispatch, _getState, { awsProxy }) => {
+		dispatch(this.actions.authStart())
+		try {
+			const newUser = await awsProxy.editUser(user)
+			return dispatch(this.actions.editUserSuccess(newUser))
 		} catch (error) {
 			return dispatch(this.actions.authError(error))
 		}

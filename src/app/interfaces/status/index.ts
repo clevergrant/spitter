@@ -3,6 +3,7 @@ import { Status } from 'app/models'
 import { Proxies } from 'app/proxy'
 import { Action, Reducer } from 'redux'
 import { ThunkAction } from 'redux-thunk'
+import { RootStore } from 'app/services/store'
 
 // types
 
@@ -115,15 +116,19 @@ export interface StatusStore {
 	readonly feed?: Status[]
 	readonly hashtags?: Status[]
 	readonly status?: Status
-	readonly lastKey: string
-	readonly numResults: number
+	readonly prev: {
+		story?: string
+		feed?: string
+		hashtags?: string
+	}
+	readonly count: number
 	readonly loading: boolean
 	readonly validationMessage: string
 }
 
 // thunk result type: ThunkAction<[Return Type], [Store Type], [Extra Arg Type], [Action Type(s)]>
 
-export type StatusResult<R> = ThunkAction<Promise<R>, StatusStore, Proxies, StatusActionType>
+export type StatusResult<R> = ThunkAction<Promise<R>, RootStore, Proxies, StatusActionType>
 
 // service
 

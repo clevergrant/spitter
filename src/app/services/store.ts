@@ -15,6 +15,10 @@ export interface RootStore {
 	readonly userStore: UserStore
 }
 
+const composeEnhancers = composeWithDevTools({
+	trace: true,
+})
+
 const store = createStore(
 
 	// This is what the store looks like
@@ -31,7 +35,7 @@ const store = createStore(
 		userStore: services.userService.store,
 	},
 
-	composeWithDevTools(
+	composeEnhancers(
 		applyMiddleware(thunk.withExtraArgument(proxies)),
 	),
 

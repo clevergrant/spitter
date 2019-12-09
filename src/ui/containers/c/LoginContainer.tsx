@@ -8,7 +8,7 @@ import React, {
 } from 'react'
 import { connect } from 'react-redux'
 
-import { Attachment, AttachmentType } from 'app/models'
+import { Attachment } from 'app/models'
 
 import services from 'app/services'
 import { RootStore } from 'app/services/store'
@@ -16,6 +16,7 @@ import { RootStore } from 'app/services/store'
 import { LoginDone } from 'app/interfaces/auth'
 
 import { Login } from 'ui/components'
+import { mimeToAttachmentType } from 'lib/util'
 
 interface Props {
 	validationMessage: string
@@ -60,31 +61,21 @@ const LoginContainer: FC<Props> = props => {
 	}
 
 	const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
-		e.persist()
-
-		setFile(e.target.value)
-
-		const list = e.target.files as FileList
-
-		if (list.length) return
-
-		const file: File = list[0]
-
-		const getFile = new Promise<string>((resolve, reject) => {
-			const reader = new FileReader()
-			reader.onerror = reject
-			reader.onload = () => {
-				resolve(reader.result as string)
-			}
-			reader.readAsDataURL(file)
-		}).catch(error => {
+		try {
+			setFile(e.target.value)
+			const list = e.target.files as FileList
+			if (!list.length) return
+			const file: File = list[0]
+			const photo = new Attachment(
+				URL.createObjectURL(file),
+				mimeToAttachmentType(file.type),
+				file
+			)
+			setPhoto(photo)
+		} catch (error) {
 			console.error(error)
-			e.target.value = ``
-		})
-
-		const photo = new Attachment(await getFile as string, AttachmentType.PHOTO, file)
-
-		setPhoto(photo)
+			alert(error.message)
+		}
 	}
 
 	const handleLogin = (e: FormEvent<HTMLFormElement>) => {

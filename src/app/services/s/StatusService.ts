@@ -41,8 +41,12 @@ class StatusService implements IStatusService {
 	// default store
 
 	readonly store: StatusStore = {
-		lastKey: `-1`,
-		numResults: 5,
+		prev: {
+			story: undefined,
+			feed: undefined,
+			hashtags: undefined,
+		},
+		count: 10,
 		loading: false,
 		validationMessage: ``,
 	}
@@ -81,14 +85,21 @@ class StatusService implements IStatusService {
 				feed: action.payload.feed ? undefined : store.feed,
 				hashtags: action.payload.hashtags ? undefined : store.hashtags,
 				status: action.payload.status ? undefined : store.status,
-				lastKey: `-1`,
+				prev: {
+					story: action.payload.story ? undefined : store.prev.story,
+					feed: action.payload.feed ? undefined : store.prev.feed,
+					hashtags: action.payload.hashtags ? undefined : store.prev.hashtags,
+				},
 			}
 
 		case StatusTypes.GET_STORY_SUCCESS:
 			return {
 				...store,
-				story: [...(store.story ? store.story : []), ...action.payload.statuses],
-				lastKey: `${action.payload.statuses[action.payload.statuses.length - 1].timestamp}`,
+				story: action.payload.statuses,
+				prev: {
+					...store.prev,
+					story: action.payload.statuses.length ? `${action.payload.statuses[action.payload.statuses.length - 1].timestamp}` : store.prev.story,
+				},
 				loading: false,
 				validationMessage: ``,
 			}
@@ -96,8 +107,11 @@ class StatusService implements IStatusService {
 		case StatusTypes.GET_FEED_SUCCESS:
 			return {
 				...store,
-				feed: [...(store.feed ? store.feed : []), ...action.payload.statuses],
-				lastKey: `${action.payload.statuses[action.payload.statuses.length - 1].timestamp}`,
+				feed: action.payload.statuses,
+				prev: {
+					...store.prev,
+					feed: action.payload.statuses.length ? `${action.payload.statuses[action.payload.statuses.length - 1].timestamp}` : store.prev.feed,
+				},
 				loading: false,
 				validationMessage: ``,
 			}
@@ -105,14 +119,28 @@ class StatusService implements IStatusService {
 		case StatusTypes.GET_HASHTAG_SUCCESS:
 			return {
 				...store,
-				hashtags: [...(store.hashtags ? store.hashtags : []), ...action.payload.statuses],
-				lastKey: `${action.payload.statuses[action.payload.statuses.length - 1].timestamp}`,
+				hashtags: action.payload.statuses,
+				prev: {
+					...store.prev,
+					hashtags: action.payload.statuses.length ? `${action.payload.statuses[action.payload.statuses.length - 1].timestamp}` : store.prev.hashtags,
+				},
+				loading: false,
+				validationMessage: ``,
+			}
+
+		case StatusTypes.ADD_STATUS_SUCCESS:
+			return {
+				...store,
+				feed: [action.payload.status, ...(store.feed ? store.feed : [])],
+				prev: {
+					...store.prev,
+					feed: `${action.payload.status.timestamp}`,
+				},
 				loading: false,
 				validationMessage: ``,
 			}
 
 		case StatusTypes.GET_STATUS_SUCCESS:
-		case StatusTypes.ADD_STATUS_SUCCESS:
 			return {
 				...store,
 				status: action.payload.status,
@@ -130,17 +158,20 @@ class StatusService implements IStatusService {
 	readonly getStory = (alias: string): StatusResult<GetStoryDone> => async (dispatch, getState, { awsProxy }) => {
 
 		const {
-			lastKey: lastId,
-			numResults,
-		} = getState()
+			story,
+			prev,
+			count,
+		} = getState().statusStore
 
 		dispatch(this.actions.statusStart())
 
 		try {
-			const lid = lastId ? lastId : `-1`
-			const statuses = await awsProxy.getStory(alias, lid, numResults)
+			const statuses = await awsProxy.getStory(alias, count, prev.story)
+			if (!story) return dispatch(this.actions.getStorySuccess(statuses))
 			if (!statuses.length) return dispatch(this.actions.statusAbort())
-			return dispatch(this.actions.getStorySuccess(statuses))
+			const newStatuses = statuses.filter(s => !story.find(ss => s.id === ss.id))
+			if (newStatuses.length) return dispatch(this.actions.getStorySuccess([...story, ...newStatuses]))
+			return dispatch(this.actions.statusAbort())
 		} catch (error) {
 			return dispatch(this.actions.statusError(error))
 		}
@@ -149,17 +180,20 @@ class StatusService implements IStatusService {
 	readonly getFeed = (alias: string): StatusResult<GetFeedDone> => async (dispatch, getState, { awsProxy }) => {
 
 		const {
-			lastKey: lastId,
-			numResults,
-		} = getState()
+			feed,
+			prev,
+			count,
+		} = getState().statusStore
 
 		dispatch(this.actions.statusStart())
 
 		try {
-			const lid = lastId ? lastId : `-1`
-			const statuses = await awsProxy.getFeed(alias, lid, numResults)
+			const statuses = await awsProxy.getFeed(alias, count, prev.feed)
+			if (!feed) return dispatch(this.actions.getFeedSuccess(statuses))
 			if (!statuses.length) return dispatch(this.actions.statusAbort())
-			return dispatch(this.actions.getFeedSuccess(statuses))
+			const newStatuses = statuses.filter(s => !feed.find(ss => s.id === ss.id))
+			if (newStatuses.length) return dispatch(this.actions.getFeedSuccess([...feed, ...newStatuses]))
+			return dispatch(this.actions.statusAbort())
 		} catch (error) {
 			return dispatch(this.actions.statusError(error))
 		}
@@ -168,17 +202,20 @@ class StatusService implements IStatusService {
 	readonly getHashtags = (hashtag: string): StatusResult<GetHashtagDone> => async (dispatch, getState, { awsProxy }) => {
 
 		const {
-			lastKey: lastId,
-			numResults,
-		} = getState()
+			hashtags,
+			prev,
+			count,
+		} = getState().statusStore
 
 		dispatch(this.actions.statusStart())
 
 		try {
-			const lid = lastId ? lastId : `-1`
-			const statuses = await awsProxy.getHashtags(hashtag, lid, numResults)
+			const statuses = await awsProxy.getHashtags(hashtag, count, prev.hashtags)
+			if (!hashtags) return dispatch(this.actions.getHashtagSuccess(statuses))
 			if (!statuses.length) return dispatch(this.actions.statusAbort())
-			return dispatch(this.actions.getHashtagSuccess(statuses))
+			const newStatuses = statuses.filter(s => !hashtags.find(ss => s.id === ss.id))
+			if (newStatuses.length) return dispatch(this.actions.getHashtagSuccess([...hashtags, ...newStatuses]))
+			return dispatch(this.actions.statusAbort())
 		} catch (error) {
 			return dispatch(this.actions.statusError(error))
 		}

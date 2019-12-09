@@ -47,15 +47,14 @@ const FeedContainer: FC<Props> = props => {
 	useEffect(
 		() => {
 			if (!user) return
-			else if (!feed) getFeed(user.alias)
+			else if (feed === undefined) getFeed(user.alias)
 			else {
 				const usersNeeded = feed.reduce((acc: string[], status: Status) => {
 					if (!acc.find(alias => alias === status.alias))
 						acc.push(status.alias)
 					return acc
 				}, [])
-
-				if (!users) getUsers(usersNeeded)
+				if (users === undefined) getUsers(usersNeeded)
 				else {
 					const usersChanged = JSON.stringify(users.map(user => user.alias)) !== JSON.stringify(usersNeeded)
 					if (usersChanged) getUsers(usersNeeded)
@@ -82,7 +81,7 @@ const FeedContainer: FC<Props> = props => {
 		})
 	}, [cleanDataStore, cleanUserStore])
 
-	if (!user || !users || !feed) return null
+	if (!user || users === undefined || feed === undefined) return null
 
 	const viewstate = {
 		feed,

@@ -4,6 +4,7 @@ import { User, Attachment } from 'app/models'
 import { ThunkAction } from 'redux-thunk'
 import { Proxies } from 'app/proxy'
 import { Action, Reducer } from 'redux'
+import { RootStore } from 'app/services/store'
 
 // types
 
@@ -15,6 +16,8 @@ export enum AuthTypes {
 
 	LOGIN_SUCCESS = 'LOGIN_SUCCESS',
 	LOGOUT_SUCCESS = 'LOGOUT_SUCCESS',
+
+	EDIT_USER_SUCCESS = 'EDIT_USER_SUCCESS',
 
 }
 
@@ -29,6 +32,9 @@ interface LoginSuccess extends Action<AuthTypes.LOGIN_SUCCESS> {
 	payload: { user: User }
 }
 interface LogoutSuccess extends Action<AuthTypes.LOGOUT_SUCCESS> { }
+interface EditUserSuccess extends Action<AuthTypes.EDIT_USER_SUCCESS> {
+	payload: { user: User }
+}
 
 export type LoginDone =
 | AuthError
@@ -38,14 +44,20 @@ export type LogoutDone =
 | AuthError
 | LogoutSuccess
 
+export type EditUserDone =
+| AuthError
+| EditUserSuccess
+
 export type AuthActionType =
 | AuthStart
 | AuthAbort
 | AuthError
 | LoginSuccess
 | LogoutSuccess
+| EditUserSuccess
 | LoginDone
 | LogoutDone
+| EditUserDone
 
 // actions
 
@@ -55,6 +67,7 @@ export interface AuthActions {
 	readonly authError: (error: Error) => AuthError
 	readonly loginSuccess: (user: User) => LoginSuccess
 	readonly logoutSuccess: () => LogoutSuccess
+	readonly editUserSuccess: (user: User) => EditUserSuccess
 }
 
 // store
@@ -67,7 +80,7 @@ export interface AuthStore {
 
 // thunk result type: ThunkAction<[Return Type], [Store Type], [Extra Arg Type], [Action Type(s)]>
 
-export type AuthResult<R> = ThunkAction<Promise<R>, AuthStore, Proxies, AuthActionType>
+export type AuthResult<R> = ThunkAction<Promise<R>, RootStore, Proxies, AuthActionType>
 
 // service
 
@@ -82,5 +95,6 @@ export interface IAuthService {
 	readonly register: (name: string, alias: string, password: string, photo: Attachment) => AuthResult<LoginDone>
 	readonly logout: (global: boolean) => AuthResult<LogoutDone>
 	readonly check: () => AuthResult<LoginDone>
+	readonly editUser: (user: User) => AuthResult<EditUserDone>
 
 }

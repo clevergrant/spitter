@@ -1,4 +1,4 @@
-import React, { FC, ChangeEvent, FormEvent } from 'react'
+import React, { FC, MouseEvent, ChangeEvent, FormEvent } from 'react'
 
 import { Attachment } from 'app/models'
 
@@ -16,6 +16,7 @@ interface Props {
 		handleSpitChange: (e: ChangeEvent<HTMLInputElement>) => void
 		handleAttachmentChange: (e: ChangeEvent<HTMLInputElement>) => void
 		handleSubmit: (e: FormEvent<HTMLFormElement>) => void
+		handleAddYTLink: (e: MouseEvent<HTMLInputElement>) => void
 	}
 }
 
@@ -31,6 +32,7 @@ const Spitter: FC<Props> = ({ viewstate, handlers }) => {
 		handleSpitChange,
 		handleAttachmentChange,
 		handleSubmit,
+		handleAddYTLink,
 	} = handlers
 
 	return (
@@ -49,9 +51,10 @@ const Spitter: FC<Props> = ({ viewstate, handlers }) => {
 					<div className='spit-attachment'>
 						<label htmlFor='input-attachment' className='label-attachment'>+ Photo</label>
 
-						<label htmlFor='input-attachment' className='label-attachment'>+ Video</label>
+						<label htmlFor='input-video' className='label-attachment'>+ YouTube</label>
 
 						<input type='file' name='attachment' id='input-attachment' onChange={handleAttachmentChange} hidden />
+						<input type='button' name='video' id='input-video' onClick={handleAddYTLink} hidden />
 					</div>
 				}
 

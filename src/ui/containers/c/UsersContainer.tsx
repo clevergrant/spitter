@@ -45,10 +45,10 @@ const UsersContainer: FC<Props> = props => {
 			if (!alias || !list) return
 			else if (!user) getUser(alias)
 			else if (list === `followers`) {
-				if (!followers) getFollowers(user.alias)
+				if (followers === undefined) getFollowers(user.alias)
 				else setUsers(followers)
 			} else if (list === `following`) {
-				if (!following) getFollowing(user.alias)
+				if (following === undefined) getFollowing(user.alias)
 				else setUsers(following)
 			}
 		},
@@ -72,7 +72,7 @@ const UsersContainer: FC<Props> = props => {
 		})
 	}, [cleanUserStore, alias, list])
 
-	if (!alias || !list || !user || !users) return null
+	if (!alias || !list || !user || users === undefined) return null
 
 	const viewstate = {
 		alias,

@@ -16,7 +16,7 @@ interface Props {
 	users?: User[]
 	hashtags?: Status[]
 	getUsers: (aliases: string[]) => Promise<GetUsersDone>
-	getHashtag: (hashtag: string) => Promise<GetHashtagDone>
+	getHashtags: (hashtag: string) => Promise<GetHashtagDone>
 	cleanDataStore: (store: StatusCleanPayload) => Promise<StatusClean>
 	cleanUserStore: (store: UserCleanPayload) => Promise<UserClean>
 }
@@ -31,7 +31,7 @@ const HashtagViewContainer: FC<Props> = props => {
 		users,
 		hashtags,
 		getUsers,
-		getHashtag,
+		getHashtags,
 		cleanDataStore,
 		cleanUserStore,
 	} = props
@@ -39,16 +39,14 @@ const HashtagViewContainer: FC<Props> = props => {
 	useEffect(
 		() => {
 			if (!hashtag) return
-			else if (!hashtags) getHashtag(hashtag)
-			else if (!users) {
-
-				const usersNeeded = hashtags.reduce((acc: string[], status: Status) => {
+			else if (hashtags === undefined)
+				getHashtags(hashtag)
+			else if (users === undefined) {
+				getUsers(hashtags.reduce((acc: string[], status: Status) => {
 					if (!acc.find(alias => alias === status.alias))
 						acc.push(status.alias)
 					return acc
-				}, [])
-
-				getUsers(usersNeeded)
+				}, []))
 			}
 		},
 		[
@@ -56,7 +54,7 @@ const HashtagViewContainer: FC<Props> = props => {
 			users,
 			hashtags,
 			getUsers,
-			getHashtag,
+			getHashtags,
 		]
 	)
 
@@ -69,7 +67,7 @@ const HashtagViewContainer: FC<Props> = props => {
 		})
 	}, [cleanDataStore, cleanUserStore, hashtag])
 
-	if (!hashtag || !hashtags || !users) return null
+	if (!hashtag || hashtags === undefined || users === undefined) return null
 
 	const viewstate = {
 		hashtag,
@@ -86,7 +84,7 @@ const mapStoreToProps = (store: RootStore) => ({
 })
 
 const mapDispatchToProps = {
-	getHashtag: services.statusService.getHashtags,
+	getHashtags: services.statusService.getHashtags,
 	cleanDataStore: services.statusService.cleanStatusStore,
 	getUsers: services.userService.getUsers,
 	cleanUserStore: services.userService.cleanUserStore,

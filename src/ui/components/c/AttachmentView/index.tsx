@@ -10,19 +10,32 @@ interface Props {
 }
 
 const AttachmentView: FC<Props> = ({ attachment, removeAttachment }) => {
+
+	const url = new URL(attachment.src)
+
+	const id = url.hostname === `youtu.be` ? url.pathname.substring(1) : url.search.substring(1).split(`&`).reduce((acc: { [key: string]: string }, item) => {
+		const [key, val] = item.split(`=`)
+		acc[key] = val
+		return acc
+	}, {}).v
+
 	return (
 		<div className='attachment-view'>
 			{removeAttachment && <button type='button' onClick={removeAttachment}>+</button>}
 
-			{attachment.attachmentType === AttachmentType.PHOTO &&
+			{attachment.type === AttachmentType.PHOTO &&
 				<img src={attachment.src} alt={attachment.src} />
 			}
 
-			{attachment.attachmentType === AttachmentType.VIDEO &&
-				<p>Not sure what to do here. Rodham said we dont need to do videos, I guess.</p>
-				// <video preload='metadata'>
-				// 	<source src={attachment.src} />
-				// </video>
+			{attachment.type === AttachmentType.VIDEO &&
+				<iframe
+					title={attachment.src}
+					width='480'
+					height='320'
+					src={`https://www.youtube.com/embed/${id}`}
+					frameBorder='0'
+					allow='encrypted-media; picture-in-picture'
+					allowFullScreen />
 			}
 		</div>
 	)
