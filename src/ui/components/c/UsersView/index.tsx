@@ -8,6 +8,7 @@ interface Props {
 		alias: string
 		list: string
 		users: string[]
+		endEl: React.RefObject<HTMLDivElement>
 	}
 }
 
@@ -17,6 +18,7 @@ const UsersView: React.FC<Props> = props => {
 		alias,
 		list,
 		users,
+		endEl,
 	} = props.viewstate
 
 	return (
@@ -27,6 +29,7 @@ const UsersView: React.FC<Props> = props => {
 					<h3>@{a}</h3>
 				</Link>
 			))}
+			<div ref={endEl} style={{ height: `2rem`, width: `100%` }} />
 		</div>
 	)
 }

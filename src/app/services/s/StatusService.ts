@@ -46,7 +46,7 @@ class StatusService implements IStatusService {
 			feed: undefined,
 			hashtags: undefined,
 		},
-		count: 10,
+		count: 50,
 		loading: false,
 		validationMessage: ``,
 	}

@@ -1,4 +1,6 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState, useRef } from 'react'
+import { elementTopInView } from 'lib/util'
+import { throttle } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { connect } from 'react-redux'
 
@@ -38,7 +40,16 @@ const UsersContainer: FC<Props> = props => {
 		cleanUserStore,
 	} = props
 
-	const [users, setUsers] = useState()
+	const [users, setUsers] = useState<string[]>()
+
+	const endEl = useRef<HTMLDivElement>(null)
+
+	window.onscroll = throttle(() => {
+		if (user && endEl.current && elementTopInView(endEl.current)) {
+			if (list === `followers`) getFollowers(user.alias)
+			else if (list === `following`) getFollowing(user.alias)
+		}
+	}, 1000, { leading: true })
 
 	useEffect(
 		() => {
@@ -78,6 +89,7 @@ const UsersContainer: FC<Props> = props => {
 		alias,
 		list,
 		users,
+		endEl,
 	}
 
 	return <UsersView viewstate={viewstate} />

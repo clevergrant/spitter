@@ -50,7 +50,7 @@ class UserService implements IUserService {
 			following: undefined,
 			followers: undefined,
 		},
-		count: 5,
+		count: 50,
 		loading: false,
 		validationMessage: ``,
 	}
@@ -210,26 +210,12 @@ class UserService implements IUserService {
 		dispatch(this.actions.userStart())
 
 		try {
-
 			const newFollowers = await awsProxy.listFollowers(alias, count, prev.followers)
-
 			if (!followers) return dispatch(this.actions.getFollowersSuccess(newFollowers))
 			if (!newFollowers.length) return dispatch(this.actions.userAbort())
-
-			let modified = false
-
-			followers.forEach(a => {
-				const found = newFollowers.find(na => na === a)
-				if (!found) {
-					modified = true
-					newFollowers.push(a)
-				}
-			})
-
-			if (modified) return dispatch(this.actions.getFollowersSuccess(newFollowers))
-
+			const newNewFollowers = newFollowers.filter(a => !followers.find(aa => a === aa))
+			if (newNewFollowers.length) return dispatch(this.actions.getFollowersSuccess([...followers, ...newNewFollowers]))
 			return dispatch(this.actions.userAbort())
-
 		} catch (error) {
 			return dispatch(this.actions.userError(error))
 		}
